@@ -1,5 +1,6 @@
 {
   "version": 2,
+  "name": "ebdcs",
   "builds": [
     {
       "src": "backend/server.js",
@@ -10,6 +11,30 @@
     {
       "src": "/api/(.*)",
       "dest": "backend/server.js"
+    },
+    {
+      "src": "/css/(.*)",
+      "dest": "frontend/css/$1"
+    },
+    {
+      "src": "/js/(.*)",
+      "dest": "frontend/js/$1"
+    },
+    {
+      "src": "/pages/(.*)",
+      "dest": "frontend/pages/$1"
+    },
+    {
+      "src": "/images/(.*)",
+      "dest": "frontend/images/$1"
+    },
+    {
+      "src": "/(.*\\.html)",
+      "dest": "frontend/$1"
+    },
+    {
+      "src": "/",
+      "dest": "frontend/index.html"
     },
     {
       "src": "/(.*)",

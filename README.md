@@ -1,4 +1,4 @@
-# 🩸 Emergency Blood Coordination and Donor Response System
+# 🩸 EBDCS: Emergency Blood Donation Coordination System
 
 A full-stack web application for emergency blood coordination between patients, donors, and blood banks.
 

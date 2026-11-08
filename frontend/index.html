@@ -3,363 +3,1155 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Emergency Blood Coordination System</title>
+  <title>EBDCS — Emergency Blood Donation Coordination System</title>
   <link rel="stylesheet" href="/css/style.css" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet" />
   <style>
-    /* ---- HERO SEARCH ---- */
-    .hero-search-wrap {
-      background: white;
-      border-radius: 16px;
-      padding: 28px 32px;
-      max-width: 700px;
-      box-shadow: 0 20px 40px rgba(0,0,0,0.15);
-      margin-top: 40px;
-    }
-    .hero-search-wrap h3 { color: var(--gray-800); margin-bottom: 18px; font-size: 1.1rem; }
-    .hs-row { display: flex; gap: 10px; flex-wrap: wrap; }
-    .hs-row select, .hs-row input {
-      flex: 1;
-      min-width: 140px;
-      padding: 11px 14px;
-      border: 2px solid var(--gray-200);
-      border-radius: 8px;
-      font-size: 0.95rem;
-      outline: none;
-      transition: border-color 0.2s;
-    }
-    .hs-row select:focus, .hs-row input:focus { border-color: var(--primary-light); }
+    * { font-family: 'Inter', 'Segoe UI', sans-serif; }
 
-    /* ---- HOW IT WORKS ---- */
-    .step-card {
-      background: white;
-      border-radius: 16px;
-      padding: 28px 24px;
-      text-align: center;
-      box-shadow: var(--shadow);
-      position: relative;
-      transition: var(--transition);
+    /* ========== NAVBAR UPGRADE ========== */
+    .navbar {
+      background: rgba(255,255,255,0.95);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      border-bottom: 1px solid rgba(0,0,0,0.06);
+      box-shadow: 0 2px 20px rgba(0,0,0,0.06);
+      position: sticky;
+      top: 0;
+      z-index: 1000;
+      padding: 0 4%;
+      transition: all 0.3s ease;
     }
-    .step-card:hover { transform: translateY(-4px); box-shadow: var(--shadow-md); }
-    .step-num {
-      width: 44px;
-      height: 44px;
-      border-radius: 50%;
-      background: var(--primary);
-      color: white;
-      font-weight: 700;
-      font-size: 1.1rem;
+    .navbar.scrolled {
+      box-shadow: 0 4px 30px rgba(0,0,0,0.12);
+    }
+    .navbar-inner {
       display: flex;
       align-items: center;
-      justify-content: center;
-      margin: 0 auto 16px;
-    }
-    .step-icon { font-size: 2.4rem; margin-bottom: 14px; }
-
-    /* ---- BLOOD GROUPS SECTION ---- */
-    .bg-grid {
-      display: grid;
-      grid-template-columns: repeat(4, 1fr);
-      gap: 16px;
-      max-width: 600px;
+      justify-content: space-between;
+      height: 72px;
+      max-width: 1280px;
       margin: 0 auto;
     }
-    .bg-card {
-      background: white;
-      border: 2px solid var(--gray-200);
-      border-radius: 12px;
-      padding: 20px 10px;
-      text-align: center;
-      cursor: pointer;
-      transition: var(--transition);
-    }
-    .bg-card:hover { border-color: var(--secondary); transform: translateY(-3px); }
-    .bg-card .bg-label { font-size: 1.6rem; font-weight: 800; color: var(--secondary); }
-    .bg-card .bg-name { font-size: 0.75rem; color: var(--gray-500); margin-top: 4px; }
-
-    /* ---- EMERGENCY CTA ---- */
-    .emergency-cta {
-      background: linear-gradient(135deg, #7f1d1d, var(--secondary));
-      border-radius: 20px;
-      padding: 60px 40px;
-      text-align: center;
-      color: white;
-    }
-    .emergency-cta h2 { font-size: 2.2rem; margin-bottom: 16px; }
-    .emergency-cta p { opacity: 0.9; margin-bottom: 32px; font-size: 1.05rem; max-width: 500px; margin-left: auto; margin-right: auto; }
-
-    /* ---- FEATURE ICONS ---- */
-    .feature-icon-wrap {
-      width: 64px;
-      height: 64px;
-      border-radius: 18px;
+    .navbar-brand {
       display: flex;
       align-items: center;
-      justify-content: center;
-      font-size: 1.8rem;
-      margin-bottom: 18px;
+      gap: 12px;
+      text-decoration: none;
     }
-
-    /* ---- TESTIMONIAL ---- */
-    .testimonial-card {
-      background: white;
-      border-radius: 16px;
-      padding: 28px;
-      box-shadow: var(--shadow);
-      border-top: 4px solid var(--primary);
-    }
-    .testimonial-card p { font-style: italic; color: var(--gray-600); margin-bottom: 20px; }
-    .testimonial-author { display: flex; align-items: center; gap: 12px; }
-    .testimonial-avatar {
+    .brand-logo {
       width: 44px;
       height: 44px;
+      background: linear-gradient(135deg, #dc2626, #b91c1c);
+      border-radius: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.4rem;
+      box-shadow: 0 4px 12px rgba(220,38,38,0.35);
+    }
+    .brand-text .brand-name {
+      font-size: 1.15rem;
+      font-weight: 800;
+      color: #0f172a;
+      letter-spacing: -0.3px;
+      display: block;
+    }
+    .brand-text .brand-sub {
+      font-size: 0.68rem;
+      color: #94a3b8;
+      font-weight: 500;
+      letter-spacing: 0.3px;
+      display: block;
+      margin-top: -1px;
+    }
+    .nav-links {
+      display: flex;
+      align-items: center;
+      gap: 2px;
+      list-style: none;
+    }
+    .nav-links a {
+      text-decoration: none;
+      color: #475569;
+      font-size: 0.88rem;
+      font-weight: 500;
+      padding: 7px 14px;
+      border-radius: 8px;
+      transition: all 0.2s ease;
+      position: relative;
+    }
+    .nav-links a:hover { color: #1e40af; background: #eff6ff; }
+    .nav-links a.active { color: #1e40af; background: #eff6ff; font-weight: 600; }
+    .nav-links .nav-emergency a {
+      background: linear-gradient(135deg, #dc2626, #b91c1c);
+      color: white !important;
+      font-weight: 600;
+      padding: 8px 16px;
+      border-radius: 8px;
+      box-shadow: 0 3px 10px rgba(220,38,38,0.3);
+      animation: navPulse 2.5s infinite;
+    }
+    @keyframes navPulse {
+      0%,100% { box-shadow: 0 3px 10px rgba(220,38,38,0.3); }
+      50% { box-shadow: 0 3px 20px rgba(220,38,38,0.55); }
+    }
+    .nav-links .nav-emergency a:hover { transform: translateY(-1px); }
+    .nav-actions { display: flex; gap: 8px; align-items: center; }
+    .nav-user-chip {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      background: #f1f5f9;
+      padding: 6px 14px 6px 8px;
+      border-radius: 30px;
+      font-size: 0.85rem;
+      font-weight: 600;
+      color: #1e40af;
+      cursor: pointer;
+      text-decoration: none;
+      transition: all 0.2s;
+    }
+    .nav-user-chip:hover { background: #dbeafe; }
+    .nav-user-avatar {
+      width: 28px;
+      height: 28px;
       border-radius: 50%;
-      background: var(--primary);
+      background: #1e40af;
       color: white;
       display: flex;
       align-items: center;
       justify-content: center;
+      font-size: 0.75rem;
       font-weight: 700;
+    }
+    .hamburger {
+      display: none;
+      flex-direction: column;
+      cursor: pointer;
+      gap: 5px;
+      padding: 6px;
+      border-radius: 8px;
+      transition: background 0.2s;
+    }
+    .hamburger:hover { background: #f1f5f9; }
+    .hamburger span {
+      width: 22px; height: 2.5px;
+      background: #334155;
+      border-radius: 3px;
+      transition: all 0.3s ease;
+      display: block;
+    }
+    .mobile-nav {
+      display: none;
+      flex-direction: column;
+      gap: 4px;
+      background: white;
+      position: absolute;
+      top: 72px;
+      left: 0; right: 0;
+      padding: 16px 20px;
+      box-shadow: 0 20px 40px rgba(0,0,0,0.12);
+      border-top: 1px solid #f1f5f9;
+      z-index: 999;
+    }
+    .mobile-nav.open { display: flex; }
+    .mobile-nav a {
+      padding: 12px 16px;
+      border-radius: 10px;
+      text-decoration: none;
+      color: #475569;
+      font-weight: 500;
+      font-size: 0.95rem;
+      transition: all 0.2s;
+    }
+    .mobile-nav a:hover { background: #f1f5f9; color: #1e40af; }
+    .mobile-nav .mobile-emergency {
+      background: linear-gradient(135deg, #dc2626, #b91c1c);
+      color: white !important;
+      text-align: center;
+      font-weight: 600;
+      margin-top: 8px;
+      border-radius: 10px;
+    }
+    .mobile-nav-divider { height: 1px; background: #f1f5f9; margin: 8px 0; }
+
+    /* ========== HERO UPGRADE ========== */
+    .hero-section {
+      background: linear-gradient(135deg, #0f172a 0%, #1e1b4b 40%, #1e3a8a 100%);
+      min-height: 92vh;
+      display: flex;
+      align-items: center;
+      position: relative;
+      overflow: hidden;
+      padding: 60px 4%;
+    }
+    .hero-bg-shapes {
+      position: absolute;
+      inset: 0;
+      pointer-events: none;
+      overflow: hidden;
+    }
+    .hero-bg-shapes .shape1 {
+      position: absolute;
+      width: 600px; height: 600px;
+      background: radial-gradient(circle, rgba(220,38,38,0.15) 0%, transparent 70%);
+      top: -100px; right: -100px;
+      border-radius: 50%;
+      animation: float1 8s ease-in-out infinite;
+    }
+    .hero-bg-shapes .shape2 {
+      position: absolute;
+      width: 400px; height: 400px;
+      background: radial-gradient(circle, rgba(59,130,246,0.12) 0%, transparent 70%);
+      bottom: -80px; left: 10%;
+      border-radius: 50%;
+      animation: float2 10s ease-in-out infinite;
+    }
+    .hero-bg-shapes .shape3 {
+      position: absolute;
+      width: 200px; height: 200px;
+      background: radial-gradient(circle, rgba(251,191,36,0.1) 0%, transparent 70%);
+      top: 30%; right: 25%;
+      border-radius: 50%;
+      animation: float3 6s ease-in-out infinite;
+    }
+    @keyframes float1 { 0%,100%{transform:translate(0,0)} 50%{transform:translate(-30px,20px)} }
+    @keyframes float2 { 0%,100%{transform:translate(0,0)} 50%{transform:translate(20px,-30px)} }
+    @keyframes float3 { 0%,100%{transform:translate(0,0)} 50%{transform:translate(-15px,15px)} }
+
+    .hero-grid {
+      max-width: 1280px;
+      margin: 0 auto;
+      width: 100%;
+      display: grid;
+      grid-template-columns: 1.1fr 0.9fr;
+      gap: 60px;
+      align-items: center;
+      position: relative;
+      z-index: 1;
+    }
+    .hero-left {}
+    .hero-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      background: rgba(220,38,38,0.2);
+      border: 1px solid rgba(220,38,38,0.4);
+      color: #fca5a5;
+      font-size: 0.78rem;
+      font-weight: 600;
+      padding: 6px 14px;
+      border-radius: 30px;
+      margin-bottom: 24px;
+      letter-spacing: 0.5px;
+      text-transform: uppercase;
+    }
+    .hero-badge .badge-dot {
+      width: 7px; height: 7px;
+      background: #ef4444;
+      border-radius: 50%;
+      animation: blink 1.5s infinite;
+    }
+    @keyframes blink { 0%,100%{opacity:1} 50%{opacity:0.3} }
+    .hero-title {
+      font-size: clamp(2.4rem, 5vw, 3.8rem);
+      font-weight: 900;
+      color: white;
+      line-height: 1.1;
+      letter-spacing: -1px;
+      margin-bottom: 20px;
+    }
+    .hero-title .highlight {
+      background: linear-gradient(135deg, #ef4444, #f97316);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+    .hero-desc {
+      font-size: 1.05rem;
+      color: #94a3b8;
+      line-height: 1.7;
+      max-width: 520px;
+      margin-bottom: 36px;
+    }
+    .hero-btns {
+      display: flex;
+      gap: 12px;
+      flex-wrap: wrap;
+      margin-bottom: 48px;
+    }
+    .btn-hero-primary {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      background: linear-gradient(135deg, #dc2626, #b91c1c);
+      color: white;
+      padding: 14px 28px;
+      border-radius: 12px;
+      font-weight: 700;
+      font-size: 0.95rem;
+      text-decoration: none;
+      box-shadow: 0 8px 25px rgba(220,38,38,0.4);
+      transition: all 0.3s ease;
+      border: none;
+      cursor: pointer;
+      animation: heroPulse 2.5s infinite;
+    }
+    @keyframes heroPulse {
+      0%,100%{ box-shadow: 0 8px 25px rgba(220,38,38,0.4); }
+      50%{ box-shadow: 0 8px 40px rgba(220,38,38,0.65); }
+    }
+    .btn-hero-primary:hover { transform: translateY(-2px); }
+    .btn-hero-secondary {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      background: rgba(255,255,255,0.08);
+      color: white;
+      padding: 14px 28px;
+      border-radius: 12px;
+      font-weight: 600;
+      font-size: 0.95rem;
+      text-decoration: none;
+      border: 1.5px solid rgba(255,255,255,0.2);
+      transition: all 0.3s ease;
+      cursor: pointer;
+    }
+    .btn-hero-secondary:hover { background: rgba(255,255,255,0.15); transform: translateY(-2px); }
+    .hero-stats-row {
+      display: flex;
+      gap: 32px;
+      flex-wrap: wrap;
+    }
+    .hero-stat-item {
+      display: flex;
+      flex-direction: column;
+    }
+    .hero-stat-item .stat-val {
+      font-size: 1.8rem;
+      font-weight: 900;
+      color: white;
+      line-height: 1;
+    }
+    .hero-stat-item .stat-lab {
+      font-size: 0.75rem;
+      color: #64748b;
+      margin-top: 4px;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+    .stat-divider {
+      width: 1px;
+      background: rgba(255,255,255,0.1);
+      align-self: stretch;
+    }
+
+    /* ---- Hero Right Card ---- */
+    .hero-right {}
+    .search-card {
+      background: rgba(255,255,255,0.05);
+      backdrop-filter: blur(20px);
+      border: 1px solid rgba(255,255,255,0.1);
+      border-radius: 20px;
+      padding: 28px;
+    }
+    .search-card-title {
+      color: white;
+      font-size: 1.1rem;
+      font-weight: 700;
+      margin-bottom: 20px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .search-card .form-control {
+      background: rgba(255,255,255,0.08);
+      border: 1.5px solid rgba(255,255,255,0.15);
+      color: white;
+      border-radius: 10px;
+    }
+    .search-card .form-control::placeholder { color: rgba(255,255,255,0.4); }
+    .search-card .form-control:focus { border-color: rgba(255,255,255,0.4); background: rgba(255,255,255,0.12); }
+    .search-card select.form-control option { background: #1e3a8a; color: white; }
+    .search-card .form-label { color: rgba(255,255,255,0.7); font-size: 0.82rem; }
+
+    /* Blood group quick select */
+    .bg-quick-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 8px;
+      margin: 16px 0;
+    }
+    .bg-quick-btn {
+      background: rgba(255,255,255,0.06);
+      border: 1.5px solid rgba(255,255,255,0.1);
+      color: white;
+      border-radius: 10px;
+      padding: 10px 6px;
+      text-align: center;
+      cursor: pointer;
+      transition: all 0.2s;
+      font-weight: 700;
+      font-size: 0.9rem;
+    }
+    .bg-quick-btn:hover, .bg-quick-btn.selected {
+      background: rgba(220,38,38,0.3);
+      border-color: rgba(220,38,38,0.6);
+      color: #fca5a5;
+      transform: scale(1.05);
+    }
+    .or-divider {
+      text-align: center;
+      color: rgba(255,255,255,0.3);
+      font-size: 0.8rem;
+      margin: 12px 0;
+      position: relative;
+    }
+    .or-divider::before, .or-divider::after {
+      content: '';
+      position: absolute;
+      top: 50%;
+      width: 42%;
+      height: 1px;
+      background: rgba(255,255,255,0.1);
+    }
+    .or-divider::before { left: 0; }
+    .or-divider::after { right: 0; }
+
+    /* Emergency tag below card */
+    .emergency-tag {
+      background: rgba(220,38,38,0.15);
+      border: 1px solid rgba(220,38,38,0.3);
+      border-radius: 12px;
+      padding: 14px 18px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      margin-top: 14px;
+    }
+    .emergency-tag-text { color: #fca5a5; font-size: 0.88rem; font-weight: 500; }
+    .emergency-tag-btn {
+      background: #dc2626;
+      color: white;
+      border: none;
+      padding: 8px 16px;
+      border-radius: 8px;
+      font-weight: 600;
+      font-size: 0.82rem;
+      cursor: pointer;
+      white-space: nowrap;
+      text-decoration: none;
+      transition: all 0.2s;
+    }
+    .emergency-tag-btn:hover { background: #b91c1c; }
+
+    /* ========== TICKER ========== */
+    .ticker-bar {
+      background: #0f172a;
+      border-bottom: 1px solid rgba(255,255,255,0.06);
+      padding: 10px 4%;
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      overflow: hidden;
+    }
+    .ticker-label {
+      background: #dc2626;
+      color: white;
+      font-size: 0.72rem;
+      font-weight: 700;
+      padding: 3px 10px;
+      border-radius: 4px;
+      white-space: nowrap;
+      letter-spacing: 0.5px;
+      text-transform: uppercase;
+    }
+    .ticker-content {
+      color: #94a3b8;
+      font-size: 0.82rem;
+      white-space: nowrap;
+      overflow: hidden;
+      flex: 1;
+    }
+    .ticker-inner {
+      display: inline-block;
+      animation: ticker 30s linear infinite;
+    }
+    @keyframes ticker {
+      0% { transform: translateX(100%); }
+      100% { transform: translateX(-100%); }
+    }
+
+    /* ========== BLOOD GROUPS ========== */
+    .bg-section { padding: 80px 4%; background: white; }
+    .bg-cards-grid {
+      display: grid;
+      grid-template-columns: repeat(8, 1fr);
+      gap: 12px;
+      max-width: 900px;
+      margin: 0 auto;
+    }
+    .bg-tile {
+      background: white;
+      border: 2px solid #f1f5f9;
+      border-radius: 16px;
+      padding: 20px 8px 16px;
+      text-align: center;
+      cursor: pointer;
+      transition: all 0.25s ease;
+      position: relative;
+      overflow: hidden;
+    }
+    .bg-tile::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(135deg, #fef2f2, #fff5f5);
+      opacity: 0;
+      transition: opacity 0.25s;
+    }
+    .bg-tile:hover::before { opacity: 1; }
+    .bg-tile:hover { border-color: #fca5a5; transform: translateY(-4px); box-shadow: 0 12px 30px rgba(220,38,38,0.15); }
+    .bg-tile .bg-type { font-size: 1.5rem; font-weight: 900; position: relative; z-index: 1; }
+    .bg-tile .bg-name { font-size: 0.65rem; color: #94a3b8; margin-top: 4px; position: relative; z-index: 1; font-weight: 500; }
+    .bg-tile.positive .bg-type { color: #dc2626; }
+    .bg-tile.negative .bg-type { color: #1e40af; }
+
+    /* ========== FEATURES ========== */
+    .features-section { padding: 90px 4%; background: #f8fafc; }
+    .features-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 20px;
+      max-width: 1280px;
+      margin: 0 auto;
+    }
+    .feature-tile {
+      background: white;
+      border-radius: 18px;
+      padding: 30px 26px;
+      border: 1px solid #f1f5f9;
+      transition: all 0.3s ease;
+      position: relative;
+      overflow: hidden;
+    }
+    .feature-tile::after {
+      content: '';
+      position: absolute;
+      bottom: 0; left: 0; right: 0;
+      height: 3px;
+      background: linear-gradient(135deg, #1e40af, #3b82f6);
+      transform: scaleX(0);
+      transition: transform 0.3s ease;
+    }
+    .feature-tile:hover::after { transform: scaleX(1); }
+    .feature-tile:hover { transform: translateY(-4px); box-shadow: 0 20px 40px rgba(0,0,0,0.08); }
+    .feature-icon-box {
+      width: 56px; height: 56px;
+      border-radius: 16px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.6rem;
+      margin-bottom: 18px;
+    }
+    .feature-tile h3 { font-size: 1.05rem; font-weight: 700; color: #0f172a; margin-bottom: 10px; }
+    .feature-tile p { font-size: 0.88rem; color: #64748b; line-height: 1.65; }
+
+    /* ========== HOW IT WORKS ========== */
+    .hiw-section { padding: 90px 4%; background: white; }
+    .hiw-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 0;
+      max-width: 1100px;
+      margin: 0 auto;
+      position: relative;
+    }
+    .hiw-grid::before {
+      content: '';
+      position: absolute;
+      top: 40px;
+      left: 12.5%;
+      right: 12.5%;
+      height: 2px;
+      background: linear-gradient(90deg, #1e40af, #dc2626);
+      z-index: 0;
+    }
+    .hiw-step {
+      text-align: center;
+      padding: 0 16px;
+      position: relative;
+      z-index: 1;
+    }
+    .hiw-num {
+      width: 80px; height: 80px;
+      border-radius: 50%;
+      background: white;
+      border: 3px solid #e2e8f0;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      margin: 0 auto 20px;
+      font-size: 1.6rem;
+      transition: all 0.3s;
+      box-shadow: 0 4px 14px rgba(0,0,0,0.06);
+    }
+    .hiw-step:hover .hiw-num {
+      border-color: #1e40af;
+      background: #eff6ff;
+      transform: scale(1.1);
+    }
+    .hiw-step h3 { font-size: 1rem; font-weight: 700; color: #0f172a; margin-bottom: 8px; }
+    .hiw-step p { font-size: 0.85rem; color: #64748b; line-height: 1.6; }
+    .hiw-badge {
+      display: inline-block;
+      background: #eff6ff;
+      color: #1e40af;
+      font-size: 0.7rem;
+      font-weight: 700;
+      padding: 3px 10px;
+      border-radius: 20px;
+      margin-bottom: 10px;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    /* ========== EMERGENCY CTA ========== */
+    .cta-section { padding: 40px 4% 80px; background: #f8fafc; }
+    .cta-card {
+      max-width: 1000px;
+      margin: 0 auto;
+      background: linear-gradient(135deg, #0f172a 0%, #1e1b4b 50%, #7f1d1d 100%);
+      border-radius: 24px;
+      padding: 60px 50px;
+      text-align: center;
+      position: relative;
+      overflow: hidden;
+    }
+    .cta-card::before {
+      content: '';
+      position: absolute;
+      top: -60px; right: -60px;
+      width: 300px; height: 300px;
+      background: radial-gradient(circle, rgba(220,38,38,0.2), transparent 70%);
+      border-radius: 50%;
+    }
+    .cta-card h2 {
+      font-size: clamp(1.8rem, 4vw, 2.6rem);
+      font-weight: 900;
+      color: white;
+      margin-bottom: 14px;
+      position: relative;
+      z-index: 1;
+    }
+    .cta-card p {
+      color: #94a3b8;
+      font-size: 1rem;
+      margin-bottom: 32px;
+      max-width: 480px;
+      margin-left: auto;
+      margin-right: auto;
+      position: relative;
+      z-index: 1;
+    }
+    .cta-btns {
+      display: flex;
+      gap: 12px;
+      justify-content: center;
+      flex-wrap: wrap;
+      position: relative;
+      z-index: 1;
+    }
+
+    /* ========== TESTIMONIALS ========== */
+    .testimonials-section { padding: 90px 4%; background: white; }
+    .testimonials-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 20px;
+      max-width: 1280px;
+      margin: 0 auto;
+    }
+    .testimonial-tile {
+      background: #f8fafc;
+      border-radius: 18px;
+      padding: 28px;
+      border: 1px solid #f1f5f9;
+      transition: all 0.3s;
+    }
+    .testimonial-tile:hover { transform: translateY(-4px); box-shadow: 0 20px 40px rgba(0,0,0,0.07); background: white; }
+    .stars { color: #f59e0b; font-size: 0.85rem; margin-bottom: 14px; }
+    .testimonial-text { color: #475569; font-size: 0.92rem; line-height: 1.7; font-style: italic; margin-bottom: 20px; }
+    .testimonial-person { display: flex; align-items: center; gap: 12px; }
+    .t-avatar {
+      width: 44px; height: 44px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 800;
+      color: white;
+      font-size: 1rem;
+      flex-shrink: 0;
+    }
+    .t-name { font-weight: 700; color: #0f172a; font-size: 0.9rem; }
+    .t-role { font-size: 0.78rem; color: #94a3b8; margin-top: 2px; }
+
+    /* ========== FOOTER UPGRADE ========== */
+    .site-footer {
+      background: #0f172a;
+      color: #64748b;
+      padding: 70px 4% 30px;
+    }
+    .footer-inner {
+      max-width: 1280px;
+      margin: 0 auto;
+    }
+    .footer-top {
+      display: grid;
+      grid-template-columns: 2fr 1fr 1fr 1fr;
+      gap: 48px;
+      margin-bottom: 48px;
+      padding-bottom: 48px;
+      border-bottom: 1px solid rgba(255,255,255,0.06);
+    }
+    .footer-brand-logo {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 16px;
+    }
+    .footer-brand-logo .logo-icon {
+      width: 38px; height: 38px;
+      background: linear-gradient(135deg, #dc2626, #b91c1c);
+      border-radius: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.2rem;
+    }
+    .footer-brand-logo span { font-size: 1.1rem; font-weight: 800; color: white; }
+    .footer-desc { font-size: 0.88rem; line-height: 1.7; color: #64748b; margin-bottom: 24px; }
+    .footer-social { display: flex; gap: 10px; }
+    .social-btn {
+      width: 38px; height: 38px;
+      border-radius: 10px;
+      background: rgba(255,255,255,0.05);
+      border: 1px solid rgba(255,255,255,0.08);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1rem;
+      cursor: pointer;
+      transition: all 0.2s;
+      text-decoration: none;
+    }
+    .social-btn:hover { background: rgba(255,255,255,0.12); transform: translateY(-2px); }
+    .footer-col h4 { color: white; font-size: 0.9rem; font-weight: 700; margin-bottom: 16px; }
+    .footer-col ul { list-style: none; display: flex; flex-direction: column; gap: 10px; }
+    .footer-col ul li a {
+      color: #64748b;
+      text-decoration: none;
+      font-size: 0.87rem;
+      transition: color 0.2s;
+    }
+    .footer-col ul li a:hover { color: white; }
+    .footer-bottom {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 12px;
+      font-size: 0.82rem;
+      color: #475569;
+    }
+    .footer-bottom a { color: #475569; text-decoration: none; }
+    .footer-bottom a:hover { color: white; }
+
+    /* ========== SECTION HEADER ========== */
+    .sec-header { text-align: center; margin-bottom: 52px; }
+    .sec-badge {
+      display: inline-block;
+      background: #eff6ff;
+      color: #1e40af;
+      font-size: 0.72rem;
+      font-weight: 700;
+      padding: 5px 14px;
+      border-radius: 20px;
+      margin-bottom: 14px;
+      text-transform: uppercase;
+      letter-spacing: 0.8px;
+    }
+    .sec-header h2 { font-size: clamp(1.6rem, 3.5vw, 2.4rem); font-weight: 800; color: #0f172a; letter-spacing: -0.5px; margin-bottom: 12px; }
+    .sec-header p { font-size: 1rem; color: #64748b; max-width: 560px; margin: 0 auto; line-height: 1.7; }
+
+    /* ========== RESPONSIVE ========== */
+    @media (max-width: 1024px) {
+      .hero-grid { grid-template-columns: 1fr; gap: 40px; }
+      .hero-right { max-width: 520px; }
+      .bg-cards-grid { grid-template-columns: repeat(4, 1fr); }
+      .features-grid { grid-template-columns: repeat(2, 1fr); }
+      .hiw-grid { grid-template-columns: repeat(2, 1fr); gap: 30px; }
+      .hiw-grid::before { display: none; }
+      .footer-top { grid-template-columns: 1fr 1fr; gap: 32px; }
+      .testimonials-grid { grid-template-columns: repeat(2, 1fr); }
+    }
+    @media (max-width: 768px) {
+      .nav-links, .nav-actions { display: none; }
+      .hamburger { display: flex; }
+      .hero-section { padding: 40px 5%; min-height: auto; }
+      .hero-title { font-size: 2.2rem; }
+      .hero-btns { flex-direction: column; }
+      .btn-hero-primary, .btn-hero-secondary { justify-content: center; }
+      .hero-stats-row { gap: 20px; }
+      .features-grid { grid-template-columns: 1fr; }
+      .hiw-grid { grid-template-columns: 1fr; }
+      .bg-cards-grid { grid-template-columns: repeat(4, 1fr); }
+      .testimonials-grid { grid-template-columns: 1fr; }
+      .footer-top { grid-template-columns: 1fr; }
+      .cta-card { padding: 40px 24px; }
+    }
+    @media (max-width: 480px) {
+      .bg-cards-grid { grid-template-columns: repeat(4, 1fr); gap: 8px; }
+      .bg-tile { padding: 14px 4px 12px; }
+      .bg-tile .bg-type { font-size: 1.1rem; }
     }
   </style>
 </head>
 <body>
 
-<!-- Navbar -->
-<nav class="navbar">
+<!-- ====== NAVBAR ====== -->
+<nav class="navbar" id="mainNav">
   <div class="navbar-inner">
     <a href="/index.html" class="navbar-brand">
-      <div class="brand-icon">🩸</div>
-      <div>
-        <span class="brand-name">BloodConnect</span>
-        <span class="brand-sub">Emergency Coordination System</span>
+      <div class="brand-logo">🩸</div>
+      <div class="brand-text">
+        <span class="brand-name">EBDCS</span>
+        <span class="brand-sub">Emergency Blood Donation Coordination System</span>
       </div>
     </a>
-    <ul class="nav-links" id="navLinks">
+
+    <ul class="nav-links">
       <li><a href="/index.html" class="active">Home</a></li>
       <li><a href="/pages/about.html">About</a></li>
       <li><a href="/pages/blood-search.html">Find Blood</a></li>
       <li><a href="/pages/blood-banks.html">Blood Banks</a></li>
       <li><a href="/pages/contact.html">Contact</a></li>
+      <li class="nav-emergency"><a href="/pages/emergency-request.html">🚨 Emergency</a></li>
     </ul>
+
     <div class="nav-actions" id="navActions">
-      <a href="/pages/login.html" class="btn btn-outline btn-sm" id="loginBtn">Login</a>
-      <a href="/pages/register-patient.html" class="btn btn-danger btn-sm">Register</a>
+      <a href="/pages/login.html" class="btn btn-outline btn-sm">Login</a>
+      <a href="/pages/register-patient.html" class="btn btn-danger btn-sm">Register Free</a>
     </div>
-    <div class="hamburger" onclick="document.getElementById('navLinks').classList.toggle('open')">
+
+    <div class="hamburger" id="hamburgerBtn" onclick="toggleMobileNav()">
       <span></span><span></span><span></span>
     </div>
   </div>
+
+  <!-- Mobile Nav -->
+  <div class="mobile-nav" id="mobileNav">
+    <a href="/index.html">🏠 Home</a>
+    <a href="/pages/about.html">ℹ️ About</a>
+    <a href="/pages/blood-search.html">🔍 Find Blood</a>
+    <a href="/pages/blood-banks.html">🏥 Blood Banks</a>
+    <a href="/pages/contact.html">📞 Contact</a>
+    <div class="mobile-nav-divider"></div>
+    <a href="/pages/login.html">🔐 Login</a>
+    <a href="/pages/register-patient.html">📝 Register as Patient</a>
+    <a href="/pages/register-donor.html">💉 Register as Donor</a>
+    <div class="mobile-nav-divider"></div>
+    <a href="/pages/emergency-request.html" class="mobile-emergency">🚨 Emergency Request</a>
+  </div>
 </nav>
 
-<!-- Hero Section -->
-<section class="hero">
-  <div class="hero-content">
-    <div class="section-badge" style="background:rgba(255,255,255,0.15);color:white">🚨 Emergency Response System</div>
-    <h1>Save Lives with<br><span style="color:#fca5a5">Emergency Blood</span><br>Coordination</h1>
-    <p>Connect patients with nearby blood banks and willing donors instantly. Every second counts in a blood emergency.</p>
-    <div class="hero-actions">
-      <a href="/pages/emergency-request.html" class="btn btn-emergency btn-lg">🚨 Emergency Request</a>
-      <a href="/pages/blood-search.html" class="btn btn-lg" style="background:rgba(255,255,255,0.15);color:white;border:2px solid rgba(255,255,255,0.3)">🔍 Find Blood</a>
-      <a href="/pages/register-donor.html" class="btn btn-lg" style="background:rgba(255,255,255,0.15);color:white;border:2px solid rgba(255,255,255,0.3)">💉 Become a Donor</a>
-    </div>
+<!-- ====== TICKER ====== -->
+<div class="ticker-bar">
+  <span class="ticker-label">🩸 LIVE</span>
+  <div class="ticker-content">
+    <span class="ticker-inner">
+      &nbsp;&nbsp;&nbsp;Emergency blood coordination active 24/7 &nbsp;•&nbsp;
+      Verified blood donors across India &nbsp;•&nbsp;
+      Real-time blood bank inventory updates &nbsp;•&nbsp;
+      SMS & Email alerts to nearest donors &nbsp;•&nbsp;
+      Admin-verified donor network &nbsp;•&nbsp;
+      56-day donation eligibility tracking &nbsp;•&nbsp;
+      Free emergency blood request service &nbsp;•&nbsp;&nbsp;&nbsp;
+    </span>
+  </div>
+</div>
 
-    <!-- Hero Quick Search -->
-    <div class="hero-search-wrap">
-      <h3>🔍 Quick Blood Search</h3>
-      <div class="hs-row">
-        <select id="quickBloodGroup">
-          <option value="">Select Blood Group</option>
-          <option>A+</option><option>A-</option><option>B+</option><option>B-</option>
-          <option>AB+</option><option>AB-</option><option>O+</option><option>O-</option>
-        </select>
-        <input type="text" id="quickCity" placeholder="Enter city or area" />
-        <button class="btn btn-primary" onclick="quickSearch()">Search Now</button>
+<!-- ====== HERO ====== -->
+<section class="hero-section">
+  <div class="hero-bg-shapes">
+    <div class="shape1"></div>
+    <div class="shape2"></div>
+    <div class="shape3"></div>
+  </div>
+  <div class="hero-grid">
+    <!-- Left -->
+    <div class="hero-left">
+      <div class="hero-badge">
+        <span class="badge-dot"></span>
+        Live Emergency Response System
+      </div>
+      <h1 class="hero-title">
+        Every Second Counts.<br>
+        Find <span class="highlight">Blood Donors</span><br>
+        Instantly.
+      </h1>
+      <p class="hero-desc">
+        EBDCS connects patients with nearby blood banks and eligible donors during emergencies. Real-time matching, instant alerts, verified donors.
+      </p>
+      <div class="hero-btns">
+        <a href="/pages/emergency-request.html" class="btn-hero-primary">🚨 Emergency Request</a>
+        <a href="/pages/blood-search.html" class="btn-hero-secondary">🔍 Find Blood Now</a>
+        <a href="/pages/register-donor.html" class="btn-hero-secondary">💉 Become a Donor</a>
+      </div>
+      <div class="hero-stats-row">
+        <div class="hero-stat-item">
+          <span class="stat-val" id="statDonors">—</span>
+          <span class="stat-lab">Donors</span>
+        </div>
+        <div class="stat-divider"></div>
+        <div class="hero-stat-item">
+          <span class="stat-val" id="statBanks">—</span>
+          <span class="stat-lab">Blood Banks</span>
+        </div>
+        <div class="stat-divider"></div>
+        <div class="hero-stat-item">
+          <span class="stat-val" id="statFulfilled">—</span>
+          <span class="stat-lab">Fulfilled</span>
+        </div>
+        <div class="stat-divider"></div>
+        <div class="hero-stat-item">
+          <span class="stat-val" id="statDonations">—</span>
+          <span class="stat-lab">Donations</span>
+        </div>
       </div>
     </div>
 
-    <div class="hero-stats">
-      <div class="hero-stat"><div class="value" id="statDonors">—</div><div class="label">Registered Donors</div></div>
-      <div class="hero-stat"><div class="value" id="statBanks">—</div><div class="label">Blood Banks</div></div>
-      <div class="hero-stat"><div class="value" id="statFulfilled">—</div><div class="label">Requests Fulfilled</div></div>
-      <div class="hero-stat"><div class="value" id="statDonations">—</div><div class="label">Total Donations</div></div>
+    <!-- Right — Search Card -->
+    <div class="hero-right">
+      <div class="search-card">
+        <div class="search-card-title">🔍 Quick Blood Search</div>
+
+        <div class="bg-quick-grid" id="bgQuickGrid">
+          <div class="bg-quick-btn positive" onclick="selectBG('A+', this)">A+</div>
+          <div class="bg-quick-btn negative" onclick="selectBG('A-', this)">A-</div>
+          <div class="bg-quick-btn positive" onclick="selectBG('B+', this)">B+</div>
+          <div class="bg-quick-btn negative" onclick="selectBG('B-', this)">B-</div>
+          <div class="bg-quick-btn positive" onclick="selectBG('AB+', this)">AB+</div>
+          <div class="bg-quick-btn negative" onclick="selectBG('AB-', this)">AB-</div>
+          <div class="bg-quick-btn positive" onclick="selectBG('O+', this)">O+</div>
+          <div class="bg-quick-btn negative" onclick="selectBG('O-', this)">O-</div>
+        </div>
+
+        <div class="or-divider">or type below</div>
+
+        <div style="display:flex;flex-direction:column;gap:10px">
+          <select id="quickBGSelect" class="form-control">
+            <option value="">Select blood group</option>
+            <option>A+</option><option>A-</option><option>B+</option><option>B-</option>
+            <option>AB+</option><option>AB-</option><option>O+</option><option>O-</option>
+          </select>
+          <input type="text" id="quickCity" class="form-control" placeholder="Enter city or area..." />
+          <button class="btn-hero-primary" style="justify-content:center;animation:none;box-shadow:none" onclick="quickSearch()">
+            Search Blood Banks & Donors →
+          </button>
+        </div>
+      </div>
+
+      <div class="emergency-tag">
+        <span class="emergency-tag-text">🆘 Life-threatening emergency?</span>
+        <a href="/pages/emergency-request.html" class="emergency-tag-btn">Request Now</a>
+      </div>
     </div>
   </div>
 </section>
 
-<!-- Blood Group Cards -->
-<section class="section" style="background:white">
-  <div class="container">
-    <div class="section-header">
-      <div class="section-badge">Blood Groups</div>
-      <h2>Find Blood by Group</h2>
-      <p>Click on a blood group to instantly find available donors and blood banks near you.</p>
+<!-- ====== BLOOD GROUPS ====== -->
+<section class="bg-section">
+  <div style="max-width:1280px;margin:0 auto">
+    <div class="sec-header">
+      <div class="sec-badge">Blood Groups</div>
+      <h2>Search by Blood Group</h2>
+      <p>Click any blood group to instantly find available banks and donors near you.</p>
     </div>
-    <div class="bg-grid">
-      <div class="bg-card" onclick="searchBloodGroup('A+')">
-        <div class="bg-label">A+</div>
+    <div class="bg-cards-grid">
+      <div class="bg-tile positive" onclick="goSearch('A+')">
+        <div class="bg-type">A+</div>
         <div class="bg-name">A Positive</div>
       </div>
-      <div class="bg-card" onclick="searchBloodGroup('A-')">
-        <div class="bg-label" style="color:var(--primary)">A-</div>
+      <div class="bg-tile negative" onclick="goSearch('A-')">
+        <div class="bg-type">A-</div>
         <div class="bg-name">A Negative</div>
       </div>
-      <div class="bg-card" onclick="searchBloodGroup('B+')">
-        <div class="bg-label">B+</div>
+      <div class="bg-tile positive" onclick="goSearch('B+')">
+        <div class="bg-type">B+</div>
         <div class="bg-name">B Positive</div>
       </div>
-      <div class="bg-card" onclick="searchBloodGroup('B-')">
-        <div class="bg-label" style="color:var(--primary)">B-</div>
+      <div class="bg-tile negative" onclick="goSearch('B-')">
+        <div class="bg-type">B-</div>
         <div class="bg-name">B Negative</div>
       </div>
-      <div class="bg-card" onclick="searchBloodGroup('AB+')">
-        <div class="bg-label">AB+</div>
+      <div class="bg-tile positive" onclick="goSearch('AB+')">
+        <div class="bg-type">AB+</div>
         <div class="bg-name">AB Positive</div>
       </div>
-      <div class="bg-card" onclick="searchBloodGroup('AB-')">
-        <div class="bg-label" style="color:var(--primary)">AB-</div>
+      <div class="bg-tile negative" onclick="goSearch('AB-')">
+        <div class="bg-type">AB-</div>
         <div class="bg-name">AB Negative</div>
       </div>
-      <div class="bg-card" onclick="searchBloodGroup('O+')">
-        <div class="bg-label">O+</div>
+      <div class="bg-tile positive" onclick="goSearch('O+')">
+        <div class="bg-type">O+</div>
         <div class="bg-name">O Positive</div>
       </div>
-      <div class="bg-card" onclick="searchBloodGroup('O-')">
-        <div class="bg-label" style="color:var(--primary)">O-</div>
+      <div class="bg-tile negative" onclick="goSearch('O-')">
+        <div class="bg-type">O-</div>
         <div class="bg-name">O Negative</div>
       </div>
     </div>
   </div>
 </section>
 
-<!-- Features -->
-<section class="section" style="background:var(--gray-50)">
-  <div class="container">
-    <div class="section-header">
-      <div class="section-badge">Our Features</div>
-      <h2>Everything You Need in an Emergency</h2>
-      <p>A complete platform built to save lives through faster blood coordination.</p>
+<!-- ====== FEATURES ====== -->
+<section class="features-section">
+  <div style="max-width:1280px;margin:0 auto">
+    <div class="sec-header">
+      <div class="sec-badge">Features</div>
+      <h2>Built for Real Emergencies</h2>
+      <p>Every feature is designed to reduce the time between a blood request and a donor response.</p>
     </div>
-    <div class="grid-3">
-      <div class="card card-body" style="text-align:center">
-        <div class="feature-icon-wrap" style="background:#fef2f2;margin:0 auto"><span>🗺️</span></div>
-        <h3>Location-Based Search</h3>
-        <p style="margin-top:10px">Find blood banks and donors closest to you using real-time GPS location and Google Maps.</p>
+    <div class="features-grid">
+      <div class="feature-tile">
+        <div class="feature-icon-box" style="background:#fef2f2">🗺️</div>
+        <h3>GPS-Based Search</h3>
+        <p>Find blood banks and donors closest to your exact location using real-time GPS and distance calculation.</p>
       </div>
-      <div class="card card-body" style="text-align:center">
-        <div class="feature-icon-wrap" style="background:#eff6ff;margin:0 auto"><span>⚡</span></div>
-        <h3>Instant Notifications</h3>
-        <p style="margin-top:10px">Compatible donors receive SMS and email alerts the moment an emergency request is created.</p>
+      <div class="feature-tile">
+        <div class="feature-icon-box" style="background:#eff6ff">⚡</div>
+        <h3>Instant Alerts</h3>
+        <p>Compatible donors get SMS and email notifications the moment an emergency request is created nearby.</p>
       </div>
-      <div class="card card-body" style="text-align:center">
-        <div class="feature-icon-wrap" style="background:#f0fdf4;margin:0 auto"><span>🩸</span></div>
-        <h3>Real-Time Inventory</h3>
-        <p style="margin-top:10px">View live blood availability across all registered blood banks with last-updated timestamps.</p>
+      <div class="feature-tile">
+        <div class="feature-icon-box" style="background:#f0fdf4">📊</div>
+        <h3>Live Inventory</h3>
+        <p>View real blood availability across all registered banks with status indicators and last-updated timestamps.</p>
       </div>
-      <div class="card card-body" style="text-align:center">
-        <div class="feature-icon-wrap" style="background:#fffbeb;margin:0 auto"><span>✅</span></div>
-        <h3>Donor Eligibility Check</h3>
-        <p style="margin-top:10px">We automatically track donation history to ensure only eligible donors respond to requests.</p>
+      <div class="feature-tile">
+        <div class="feature-icon-box" style="background:#fffbeb">✅</div>
+        <h3>Eligibility Tracking</h3>
+        <p>Donation history is tracked automatically. Only donors who are 56+ days post-donation are shown as eligible.</p>
       </div>
-      <div class="card card-body" style="text-align:center">
-        <div class="feature-icon-wrap" style="background:#fdf4ff;margin:0 auto"><span>🔐</span></div>
-        <h3>Secure & Verified</h3>
-        <p style="margin-top:10px">All donors and blood banks are admin-verified. Your personal data is protected and encrypted.</p>
+      <div class="feature-tile">
+        <div class="feature-icon-box" style="background:#fdf4ff">🔐</div>
+        <h3>Verified Network</h3>
+        <p>Every donor and blood bank is reviewed and verified by admin before appearing in search results.</p>
       </div>
-      <div class="card card-body" style="text-align:center">
-        <div class="feature-icon-wrap" style="background:#fff0f3;margin:0 auto"><span>📊</span></div>
-        <h3>Live Dashboard</h3>
-        <p style="margin-top:10px">Track request status, donor responses, and donation history from your personal dashboard.</p>
+      <div class="feature-tile">
+        <div class="feature-icon-box" style="background:#fff0f3">🩸</div>
+        <h3>Smart Matching</h3>
+        <p>Blood compatibility engine matches requests to donors by ABO/Rh type — not just exact blood group.</p>
       </div>
     </div>
   </div>
 </section>
 
-<!-- How it Works -->
-<section class="section" style="background:white">
-  <div class="container">
-    <div class="section-header">
-      <div class="section-badge">How It Works</div>
-      <h2>Simple Steps to Save a Life</h2>
+<!-- ====== HOW IT WORKS ====== -->
+<section class="hiw-section">
+  <div style="max-width:1280px;margin:0 auto">
+    <div class="sec-header">
+      <div class="sec-badge">How It Works</div>
+      <h2>From Request to Donation in Minutes</h2>
     </div>
-    <div class="grid-4">
-      <div class="step-card">
-        <div class="step-num">1</div>
-        <div class="step-icon">📝</div>
+    <div class="hiw-grid">
+      <div class="hiw-step">
+        <div class="hiw-num">📝</div>
+        <div class="hiw-badge">Step 1</div>
         <h3>Register</h3>
-        <p style="margin-top:8px">Create your account as a patient or blood donor in under 2 minutes.</p>
+        <p>Create your account as a patient or donor in under 2 minutes. Free forever.</p>
       </div>
-      <div class="step-card">
-        <div class="step-num">2</div>
-        <div class="step-icon">🚨</div>
-        <h3>Create Request</h3>
-        <p style="margin-top:8px">Fill in patient details, required blood group, and hospital information.</p>
+      <div class="hiw-step">
+        <div class="hiw-num">🚨</div>
+        <div class="hiw-badge">Step 2</div>
+        <h3>Submit Request</h3>
+        <p>Fill patient details, blood group needed, and hospital info. Takes 60 seconds.</p>
       </div>
-      <div class="step-card">
-        <div class="step-num">3</div>
-        <div class="step-icon">🔔</div>
-        <h3>Donors Notified</h3>
-        <p style="margin-top:8px">Nearby compatible donors are instantly alerted via SMS and email.</p>
+      <div class="hiw-step">
+        <div class="hiw-num">🔔</div>
+        <div class="hiw-badge">Step 3</div>
+        <h3>Donors Alerted</h3>
+        <p>Up to 10 nearby compatible donors receive instant SMS and email alerts.</p>
       </div>
-      <div class="step-card">
-        <div class="step-num">4</div>
-        <div class="step-icon">💚</div>
+      <div class="hiw-step">
+        <div class="hiw-num">💚</div>
+        <div class="hiw-badge">Step 4</div>
         <h3>Life Saved</h3>
-        <p style="margin-top:8px">Donors accept the request, coordinate with the hospital, and donate blood.</p>
+        <p>Donor accepts, coordinates with hospital, and donates. Request marked fulfilled.</p>
       </div>
     </div>
   </div>
 </section>
 
-<!-- Emergency CTA -->
-<section class="section-sm" style="padding: 40px 5%">
-  <div class="container">
-    <div class="emergency-cta">
-      <div style="font-size:3rem;margin-bottom:16px">🚨</div>
-      <h2>Need Blood Urgently?</h2>
-      <p>Don't wait. Create an emergency request right now and reach dozens of nearby donors within minutes.</p>
-      <div style="display:flex;gap:14px;justify-content:center;flex-wrap:wrap">
-        <a href="/pages/emergency-request.html" class="btn btn-lg" style="background:white;color:var(--secondary);font-weight:700">🩸 Create Emergency Request</a>
-        <a href="/pages/blood-search.html" class="btn btn-lg" style="background:rgba(255,255,255,0.15);color:white;border:2px solid rgba(255,255,255,0.5)">🔍 Search Blood Banks</a>
-      </div>
+<!-- ====== EMERGENCY CTA ====== -->
+<section class="cta-section">
+  <div class="cta-card">
+    <div style="font-size:2.8rem;margin-bottom:16px">🚨</div>
+    <h2>Need Blood Right Now?</h2>
+    <p>Don't search manually. Submit an emergency request and let EBDCS find a compatible donor for you — instantly.</p>
+    <div class="cta-btns">
+      <a href="/pages/emergency-request.html" class="btn-hero-primary" style="animation:none">🩸 Emergency Request</a>
+      <a href="/pages/blood-search.html" class="btn-hero-secondary">🔍 Search Blood Banks</a>
+      <a href="/pages/register-donor.html" class="btn-hero-secondary">💉 Become a Donor</a>
     </div>
   </div>
 </section>
 
-<!-- Testimonials -->
-<section class="section" style="background:var(--gray-50)">
-  <div class="container">
-    <div class="section-header">
-      <div class="section-badge">Stories</div>
+<!-- ====== TESTIMONIALS ====== -->
+<section class="testimonials-section">
+  <div style="max-width:1280px;margin:0 auto">
+    <div class="sec-header">
+      <div class="sec-badge">Real Stories</div>
       <h2>Lives We've Helped Save</h2>
     </div>
-    <div class="grid-3">
-      <div class="testimonial-card">
-        <p>"My father needed O- blood urgently after surgery. BloodConnect found a donor within 40 minutes. I'm forever grateful."</p>
-        <div class="testimonial-author">
-          <div class="testimonial-avatar">R</div>
+    <div class="testimonials-grid">
+      <div class="testimonial-tile">
+        <div class="stars">★★★★★</div>
+        <p class="testimonial-text">"My father needed O- blood urgently after surgery. EBDCS found a donor within 40 minutes. I'm forever grateful for this platform."</p>
+        <div class="testimonial-person">
+          <div class="t-avatar" style="background:#1e40af">R</div>
           <div>
-            <div style="font-weight:700;color:var(--gray-800)">Ravi Kumar</div>
-            <div style="font-size:0.82rem;color:var(--gray-500)">Patient's family member</div>
+            <div class="t-name">Ravi Kumar</div>
+            <div class="t-role">Patient's family · Bangalore</div>
           </div>
         </div>
       </div>
-      <div class="testimonial-card">
-        <p>"I registered as a donor and got a notification for an emergency A+ request just 2 km away. Felt amazing to help."</p>
-        <div class="testimonial-author">
-          <div class="testimonial-avatar" style="background:var(--success)">P</div>
+      <div class="testimonial-tile">
+        <div class="stars">★★★★★</div>
+        <p class="testimonial-text">"I registered as a donor and got notified for an A+ emergency request just 2 km from home. Donating felt amazing. This system works!"</p>
+        <div class="testimonial-person">
+          <div class="t-avatar" style="background:#16a34a">P</div>
           <div>
-            <div style="font-weight:700;color:var(--gray-800)">Priya Sharma</div>
-            <div style="font-size:0.82rem;color:var(--gray-500)">Blood Donor, 4 donations</div>
+            <div class="t-name">Priya Sharma</div>
+            <div class="t-role">Blood Donor · 4 donations · Mumbai</div>
           </div>
         </div>
       </div>
-      <div class="testimonial-card">
-        <p>"The admin dashboard makes it easy to monitor our blood bank inventory and verify donors. Excellent system."</p>
-        <div class="testimonial-author">
-          <div class="testimonial-avatar" style="background:var(--warning)">D</div>
+      <div class="testimonial-tile">
+        <div class="stars">★★★★★</div>
+        <p class="testimonial-text">"The admin dashboard lets us track inventory and verify donors with ease. This has streamlined our blood bank operations significantly."</p>
+        <div class="testimonial-person">
+          <div class="t-avatar" style="background:#d97706">D</div>
           <div>
-            <div style="font-weight:700;color:var(--gray-800)">Dr. Anita Mehta</div>
-            <div style="font-size:0.82rem;color:var(--gray-500)">Hospital Administrator</div>
+            <div class="t-name">Dr. Anita Mehta</div>
+            <div class="t-role">Hospital Administrator · Hyderabad</div>
           </div>
         </div>
       </div>
@@ -367,102 +1159,145 @@
   </div>
 </section>
 
-<!-- Footer -->
-<footer>
-  <div class="footer-grid">
-    <div>
-      <div class="footer-brand-name">🩸 BloodConnect</div>
-      <p style="font-size:0.9rem;margin-bottom:20px">Emergency Blood Coordination and Donor Response System. Saving lives through technology and community.</p>
-      <div style="display:flex;gap:12px">
-        <span style="font-size:1.5rem;cursor:pointer">📘</span>
-        <span style="font-size:1.5rem;cursor:pointer">🐦</span>
-        <span style="font-size:1.5rem;cursor:pointer">📸</span>
+<!-- ====== FOOTER ====== -->
+<footer class="site-footer">
+  <div class="footer-inner">
+    <div class="footer-top">
+      <div>
+        <div class="footer-brand-logo">
+          <div class="logo-icon">🩸</div>
+          <span>EBDCS</span>
+        </div>
+        <p class="footer-desc">Emergency Blood Coordination and Donor Response System. Connecting patients with donors and blood banks to save lives — 24/7.</p>
+        <div class="footer-social">
+          <a class="social-btn" href="#" title="Facebook">📘</a>
+          <a class="social-btn" href="#" title="Twitter">🐦</a>
+          <a class="social-btn" href="#" title="Instagram">📸</a>
+          <a class="social-btn" href="#" title="LinkedIn">💼</a>
+        </div>
+      </div>
+      <div class="footer-col">
+        <h4>Quick Links</h4>
+        <ul>
+          <li><a href="/index.html">Home</a></li>
+          <li><a href="/pages/about.html">About Us</a></li>
+          <li><a href="/pages/blood-search.html">Find Blood</a></li>
+          <li><a href="/pages/blood-banks.html">Blood Banks</a></li>
+          <li><a href="/pages/contact.html">Contact</a></li>
+        </ul>
+      </div>
+      <div class="footer-col">
+        <h4>For Donors</h4>
+        <ul>
+          <li><a href="/pages/register-donor.html">Register as Donor</a></li>
+          <li><a href="/pages/login.html">Donor Login</a></li>
+          <li><a href="/pages/donor-dashboard.html">Donor Dashboard</a></li>
+          <li><a href="/pages/about.html#eligibility">Eligibility Guide</a></li>
+        </ul>
+      </div>
+      <div class="footer-col">
+        <h4>For Patients</h4>
+        <ul>
+          <li><a href="/pages/register-patient.html">Patient Register</a></li>
+          <li><a href="/pages/emergency-request.html">Emergency Request</a></li>
+          <li><a href="/pages/patient-dashboard.html">My Dashboard</a></li>
+          <li><a href="/pages/blood-banks.html">Blood Banks</a></li>
+        </ul>
       </div>
     </div>
-    <div>
-      <h4>Quick Links</h4>
-      <ul>
-        <li><a href="/index.html">Home</a></li>
-        <li><a href="/pages/about.html">About Us</a></li>
-        <li><a href="/pages/blood-search.html">Find Blood</a></li>
-        <li><a href="/pages/blood-banks.html">Blood Banks</a></li>
-        <li><a href="/pages/contact.html">Contact</a></li>
-      </ul>
+    <div class="footer-bottom">
+      <span>© 2024 EBDCS Emergency Blood Donation Coordination System. All rights reserved.</span>
+      <span>🩸 Every drop counts. Be a hero today.</span>
     </div>
-    <div>
-      <h4>For Donors</h4>
-      <ul>
-        <li><a href="/pages/register-donor.html">Register as Donor</a></li>
-        <li><a href="/pages/login.html">Donor Login</a></li>
-        <li><a href="/pages/donor-dashboard.html">Donor Dashboard</a></li>
-        <li><a href="/pages/about.html#eligibility">Eligibility Criteria</a></li>
-      </ul>
-    </div>
-    <div>
-      <h4>For Patients</h4>
-      <ul>
-        <li><a href="/pages/register-patient.html">Patient Register</a></li>
-        <li><a href="/pages/emergency-request.html">Emergency Request</a></li>
-        <li><a href="/pages/patient-dashboard.html">Patient Dashboard</a></li>
-        <li><a href="/pages/blood-banks.html">Blood Banks</a></li>
-      </ul>
-    </div>
-  </div>
-  <div class="footer-bottom">
-    <span>© 2024 BloodConnect Emergency Coordination System. All rights reserved.</span>
-    <span>🩸 Every drop counts. Be a hero.</span>
   </div>
 </footer>
 
 <script src="/js/api.js"></script>
 <script src="/js/utils.js"></script>
 <script>
-  // Update nav based on login state
-  window.addEventListener('DOMContentLoaded', () => {
-    const user = getUser();
-    if (user) {
-      const actions = document.getElementById('navActions');
-      if (actions) {
-        const dashboardUrl = user.role === 'donor' ? '/pages/donor-dashboard.html'
-          : user.role === 'admin' ? '/pages/admin-dashboard.html'
-          : '/pages/patient-dashboard.html';
-        actions.innerHTML = `
-          <a href="${dashboardUrl}" class="btn btn-outline btn-sm">Dashboard</a>
-          <button class="btn btn-danger btn-sm" onclick="Auth.logout()">Logout</button>
-        `;
-      }
-    }
+  let selectedBG = '';
 
-    // Load stats
-    loadStats();
+  // Navbar scroll effect
+  window.addEventListener('scroll', () => {
+    document.getElementById('mainNav').classList.toggle('scrolled', window.scrollY > 10);
   });
 
-  const loadStats = async () => {
+  // Mobile nav toggle
+  const toggleMobileNav = () => {
+    document.getElementById('mobileNav').classList.toggle('open');
+  };
+
+  // Close mobile nav on outside click
+  document.addEventListener('click', (e) => {
+    const nav = document.getElementById('mobileNav');
+    const btn = document.getElementById('hamburgerBtn');
+    if (!nav.contains(e.target) && !btn.contains(e.target)) {
+      nav.classList.remove('open');
+    }
+  });
+
+  // Blood group quick select (hero card)
+  const selectBG = (bg, el) => {
+    selectedBG = bg;
+    document.querySelectorAll('.bg-quick-btn').forEach(b => b.classList.remove('selected'));
+    el.classList.add('selected');
+    document.getElementById('quickBGSelect').value = bg;
+  };
+
+  // Quick search
+  const quickSearch = () => {
+    const bg = selectedBG || document.getElementById('quickBGSelect').value;
+    const city = document.getElementById('quickCity').value.trim();
+    if (!bg) { alert('Please select a blood group'); return; }
+    window.location.href = `/pages/blood-search.html?bloodGroup=${encodeURIComponent(bg)}${city ? '&city=' + encodeURIComponent(city) : ''}`;
+  };
+
+  // Blood group section click
+  const goSearch = (bg) => {
+    window.location.href = `/pages/blood-search.html?bloodGroup=${encodeURIComponent(bg)}`;
+  };
+
+  // Load stats & update nav on load
+  window.addEventListener('DOMContentLoaded', async () => {
+    // Update navbar for logged-in user
+    const user = getUser();
+    if (user) {
+      const dbUrl = user.role === 'donor' ? '/pages/donor-dashboard.html'
+        : user.role === 'admin' || user.role === 'superadmin' ? '/pages/admin-dashboard.html'
+        : '/pages/patient-dashboard.html';
+      document.getElementById('navActions').innerHTML = `
+        <a href="${dbUrl}" class="nav-user-chip">
+          <div class="nav-user-avatar">${user.name ? user.name[0].toUpperCase() : '?'}</div>
+          ${user.name ? user.name.split(' ')[0] : 'Dashboard'}
+        </a>
+        <button class="btn btn-outline btn-sm" onclick="Auth.logout()">Logout</button>
+      `;
+    }
+
+    // Load live stats
     try {
       const res = await apiFetch('/admin/stats');
       if (res.success) {
         const d = res.data;
-        document.getElementById('statDonors').textContent = (d.totalDonors || 0).toLocaleString();
-        document.getElementById('statBanks').textContent = (d.totalBloodBanks || 0).toLocaleString();
-        document.getElementById('statFulfilled').textContent = (d.fulfilledRequests || 0).toLocaleString();
-        document.getElementById('statDonations').textContent = (d.totalDonations || 0).toLocaleString();
+        animateCount('statDonors', d.totalDonors || 0);
+        animateCount('statBanks', d.totalBloodBanks || 0);
+        animateCount('statFulfilled', d.fulfilledRequests || 0);
+        animateCount('statDonations', d.totalDonations || 0);
       }
-    } catch {
-      // Stats are not critical — fail silently
-      document.getElementById('statDonors').textContent = '—';
-    }
-  };
+    } catch { /* fail silently */ }
+  });
 
-  const quickSearch = () => {
-    const bg = document.getElementById('quickBloodGroup').value;
-    const city = document.getElementById('quickCity').value.trim();
-    if (!bg) { showToast('Please select a blood group', 'warning'); return; }
-    const params = new URLSearchParams({ bloodGroup: bg, city });
-    window.location.href = `/pages/blood-search.html?${params}`;
-  };
-
-  const searchBloodGroup = (bg) => {
-    window.location.href = `/pages/blood-search.html?bloodGroup=${encodeURIComponent(bg)}`;
+  // Animated number counter
+  const animateCount = (id, target) => {
+    const el = document.getElementById(id);
+    if (!el || target === 0) { el.textContent = target; return; }
+    let start = 0;
+    const step = Math.ceil(target / 40);
+    const timer = setInterval(() => {
+      start += step;
+      if (start >= target) { el.textContent = target.toLocaleString(); clearInterval(timer); }
+      else el.textContent = start.toLocaleString();
+    }, 40);
   };
 </script>
 </body>

@@ -1,7 +1,7 @@
 {
-  "name": "blood-coordination-system",
+  "name": "ebdcs",
   "version": "1.0.0",
-  "description": "Emergency Blood Coordination and Donor Response System",
+  "description": "EBDCS: Emergency Blood Donation Coordination System",
   "main": "server.js",
   "scripts": {
     "start": "node server.js",

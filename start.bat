@@ -1,10 +1,11 @@
 @echo off
-title BloodConnect Server
+title EBDCS Server
 color 0A
 
 echo.
 echo  ==========================================
-echo   Starting BloodConnect Blood System...
+echo   EBDCS: Emergency Blood Donation
+echo   Coordination System
 echo  ==========================================
 echo.
 
