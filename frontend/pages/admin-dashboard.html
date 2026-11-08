@@ -1,0 +1,536 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Admin Dashboard — BloodConnect</title>
+  <link rel="stylesheet" href="/css/style.css" />
+  <style>
+    .admin-badge { background: linear-gradient(135deg, var(--primary-dark), var(--primary)); color: white; padding: 3px 10px; border-radius: 20px; font-size: 0.75rem; font-weight: 700; text-transform: uppercase; }
+    .data-table th { cursor: pointer; user-select: none; }
+    .data-table th:hover { background: var(--gray-200); }
+  </style>
+</head>
+<body>
+<nav class="navbar">
+  <div class="navbar-inner">
+    <a href="/index.html" class="navbar-brand">
+      <div class="brand-icon">🩸</div>
+      <div><span class="brand-name">BloodConnect</span><span class="brand-sub">Emergency Coordination System</span></div>
+    </a>
+    <div class="nav-actions">
+      <span class="admin-badge">⚙️ Admin</span>
+      <button class="btn btn-outline btn-sm" onclick="Auth.logout()">Logout</button>
+    </div>
+    <div class="hamburger" id="sidebarToggle"><span></span><span></span><span></span></div>
+  </div>
+</nav>
+
+<div class="dashboard-layout">
+  <aside class="sidebar" id="sidebar">
+    <div class="sidebar-header">
+      <div style="font-size:1.8rem;margin-bottom:10px">⚙️</div>
+      <div class="sidebar-user-name" id="sidebarName">Admin</div>
+      <div class="sidebar-user-role">System Administrator</div>
+    </div>
+    <nav class="sidebar-nav">
+      <div class="sidebar-section-label">Overview</div>
+      <a class="sidebar-nav-item active" data-section="sec-stats"><span class="nav-icon">📊</span> Statistics</a>
+      <div class="sidebar-section-label">Management</div>
+      <a class="sidebar-nav-item" data-section="sec-donors"><span class="nav-icon">💉</span> Donors</a>
+      <a class="sidebar-nav-item" data-section="sec-patients"><span class="nav-icon">🏥</span> Patients</a>
+      <a class="sidebar-nav-item" data-section="sec-requests"><span class="nav-icon">🚨</span> Requests</a>
+      <a class="sidebar-nav-item" data-section="sec-banks"><span class="nav-icon">🏦</span> Blood Banks</a>
+      <div class="sidebar-section-label">Actions</div>
+      <a class="sidebar-nav-item" data-section="sec-add-bank"><span class="nav-icon">➕</span> Add Blood Bank</a>
+    </nav>
+  </aside>
+
+  <main class="dashboard-main">
+
+    <!-- Statistics -->
+    <div class="dashboard-section active" id="sec-stats">
+      <h2 style="margin-bottom:24px">Dashboard Statistics</h2>
+      <div id="statsContent"><div class="spinner"></div></div>
+    </div>
+
+    <!-- Donors Management -->
+    <div class="dashboard-section" id="sec-donors">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:20px;flex-wrap:wrap;gap:12px">
+        <h2>Donor Management</h2>
+        <div style="display:flex;gap:10px;flex-wrap:wrap">
+          <select id="donorBGFilter" class="form-control" style="width:auto" onchange="loadDonors()">
+            <option value="">All Blood Groups</option>
+            <option>A+</option><option>A-</option><option>B+</option><option>B-</option>
+            <option>AB+</option><option>AB-</option><option>O+</option><option>O-</option>
+          </select>
+          <select id="donorVerifiedFilter" class="form-control" style="width:auto" onchange="loadDonors()">
+            <option value="">All Status</option>
+            <option value="false">Unverified</option>
+            <option value="true">Verified</option>
+          </select>
+          <button class="btn btn-outline btn-sm" onclick="loadDonors()">🔄 Refresh</button>
+        </div>
+      </div>
+      <div id="donorsList"><div class="spinner"></div></div>
+    </div>
+
+    <!-- Patients Management -->
+    <div class="dashboard-section" id="sec-patients">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:20px;flex-wrap:wrap;gap:12px">
+        <h2>Patient Management</h2>
+        <div style="display:flex;gap:10px">
+          <input type="text" id="patientSearch" class="form-control" placeholder="Search name/email..." style="width:220px" />
+          <button class="btn btn-outline btn-sm" onclick="loadPatients()">Search</button>
+        </div>
+      </div>
+      <div id="patientsList"><div class="spinner"></div></div>
+    </div>
+
+    <!-- Requests Management -->
+    <div class="dashboard-section" id="sec-requests">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:20px;flex-wrap:wrap;gap:12px">
+        <h2>Emergency Requests</h2>
+        <div style="display:flex;gap:10px;flex-wrap:wrap">
+          <select id="reqStatusFilter" class="form-control" style="width:auto" onchange="loadRequests()">
+            <option value="">All Status</option>
+            <option value="active">Active</option>
+            <option value="fulfilled">Fulfilled</option>
+            <option value="cancelled">Cancelled</option>
+          </select>
+          <button class="btn btn-outline btn-sm" onclick="loadRequests()">🔄 Refresh</button>
+        </div>
+      </div>
+      <div id="requestsList"><div class="spinner"></div></div>
+    </div>
+
+    <!-- Blood Banks Management -->
+    <div class="dashboard-section" id="sec-banks">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:20px;flex-wrap:wrap;gap:12px">
+        <h2>Blood Bank Management</h2>
+        <button class="btn btn-primary btn-sm" onclick="goSection('sec-add-bank')">➕ Add Blood Bank</button>
+      </div>
+      <div id="banksList"><div class="spinner"></div></div>
+
+      <!-- Inventory Update Modal -->
+      <div class="modal-overlay" id="inventoryModal">
+        <div class="modal">
+          <div class="modal-header">
+            <h3>Update Blood Inventory</h3>
+            <button class="modal-close" onclick="closeModal('inventoryModal')">✕</button>
+          </div>
+          <div class="modal-body">
+            <input type="hidden" id="invBankId" />
+            <div class="form-group">
+              <label class="form-label">Blood Group</label>
+              <select id="invBloodGroup" class="form-control">
+                <option>A+</option><option>A-</option><option>B+</option><option>B-</option>
+                <option>AB+</option><option>AB-</option><option>O+</option><option>O-</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label class="form-label">Units Available</label>
+              <input type="number" id="invUnits" class="form-control" min="0" placeholder="0" />
+            </div>
+          </div>
+          <div class="modal-footer">
+            <button class="btn btn-outline" onclick="closeModal('inventoryModal')">Cancel</button>
+            <button class="btn btn-primary" onclick="saveInventory()">Save</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Add Blood Bank -->
+    <div class="dashboard-section" id="sec-add-bank">
+      <h2 style="margin-bottom:24px">Add Blood Bank</h2>
+      <div class="card" style="max-width:700px">
+        <div class="card-body">
+          <div id="addBankAlert" class="hidden"></div>
+          <form id="addBankForm" novalidate>
+            <div class="form-grid">
+              <div class="form-group">
+                <label class="form-label">Bank Name <span class="required">*</span></label>
+                <input type="text" name="name" id="bankName" class="form-control" data-required />
+                <div class="form-error" data-error="bankName"></div>
+              </div>
+              <div class="form-group">
+                <label class="form-label">Registration Number <span class="required">*</span></label>
+                <input type="text" name="registrationNumber" id="bankRegNum" class="form-control" data-required />
+                <div class="form-error" data-error="bankRegNum"></div>
+              </div>
+              <div class="form-group">
+                <label class="form-label">Email <span class="required">*</span></label>
+                <input type="email" name="email" id="bankEmail" class="form-control" data-required />
+                <div class="form-error" data-error="bankEmail"></div>
+              </div>
+              <div class="form-group">
+                <label class="form-label">Phone <span class="required">*</span></label>
+                <input type="tel" name="phone" id="bankPhone" class="form-control" data-required />
+                <div class="form-error" data-error="bankPhone"></div>
+              </div>
+              <div class="form-group" style="grid-column:1/-1">
+                <label class="form-label">Street Address <span class="required">*</span></label>
+                <input type="text" name="street" id="bankStreet" class="form-control" data-required />
+              </div>
+              <div class="form-group">
+                <label class="form-label">City <span class="required">*</span></label>
+                <input type="text" name="city" id="bankCity" class="form-control" data-required />
+              </div>
+              <div class="form-group">
+                <label class="form-label">State <span class="required">*</span></label>
+                <input type="text" name="state" id="bankState" class="form-control" data-required />
+              </div>
+              <div class="form-group">
+                <label class="form-label">Pincode <span class="required">*</span></label>
+                <input type="text" name="pincode" id="bankPincode" class="form-control" data-required />
+              </div>
+              <div class="form-group">
+                <label class="form-label">Latitude <span class="required">*</span></label>
+                <input type="number" name="latitude" id="bankLat" class="form-control" placeholder="e.g. 12.9716" step="any" data-required />
+              </div>
+              <div class="form-group">
+                <label class="form-label">Longitude <span class="required">*</span></label>
+                <input type="number" name="longitude" id="bankLng" class="form-control" placeholder="e.g. 77.5946" step="any" data-required />
+              </div>
+              <div class="form-group">
+                <label class="form-label">Open Time</label>
+                <input type="time" id="bankOpen" class="form-control" value="08:00" />
+              </div>
+              <div class="form-group">
+                <label class="form-label">Close Time</label>
+                <input type="time" id="bankClose" class="form-control" value="20:00" />
+              </div>
+              <div class="form-group">
+                <label style="display:flex;align-items:center;gap:8px;cursor:pointer">
+                  <input type="checkbox" id="bank24hrs" /> Open 24 Hours
+                </label>
+              </div>
+            </div>
+            <button type="submit" class="btn btn-primary btn-lg" id="addBankBtn">Add Blood Bank</button>
+          </form>
+        </div>
+      </div>
+    </div>
+
+  </main>
+</div>
+
+<script src="/js/api.js"></script>
+<script src="/js/utils.js"></script>
+<script>
+  window.addEventListener('DOMContentLoaded', async () => {
+    if (!requireAuth(['admin', 'superadmin', 'moderator'])) return;
+    initSidebar();
+    document.getElementById('sidebarToggle').addEventListener('click', () => {
+      document.getElementById('sidebar').classList.toggle('open');
+    });
+    try {
+      const me = await Auth.me();
+      document.getElementById('sidebarName').textContent = me.user.name;
+    } catch {}
+    loadStats();
+  });
+
+  const goSection = (id) => {
+    document.querySelectorAll('.dashboard-section').forEach(s => s.classList.remove('active'));
+    document.getElementById(id)?.classList.add('active');
+    document.querySelectorAll('.sidebar-nav-item').forEach(n => {
+      n.classList.toggle('active', n.dataset.section === id);
+    });
+    // Lazy load section data
+    if (id === 'sec-donors') loadDonors();
+    if (id === 'sec-patients') loadPatients();
+    if (id === 'sec-requests') loadRequests();
+    if (id === 'sec-banks') loadBanks();
+  };
+
+  // Override sidebar to also trigger data loads
+  document.querySelectorAll('.sidebar-nav-item[data-section]').forEach(item => {
+    item.addEventListener('click', () => goSection(item.dataset.section));
+  });
+
+  // ---- STATS ----
+  const loadStats = async () => {
+    const container = document.getElementById('statsContent');
+    try {
+      const data = await AdminAPI.getStats();
+      const d = data.data;
+      container.innerHTML = `
+        <div class="grid-4" style="margin-bottom:28px">
+          <div class="stat-card"><div class="stat-icon blue">👥</div><div><div class="stat-value">${d.totalUsers}</div><div class="stat-label">Patients</div></div></div>
+          <div class="stat-card"><div class="stat-icon red">💉</div><div><div class="stat-value">${d.totalDonors}</div><div class="stat-label">Donors</div></div></div>
+          <div class="stat-card"><div class="stat-icon green">🏥</div><div><div class="stat-value">${d.totalBloodBanks}</div><div class="stat-label">Blood Banks</div></div></div>
+          <div class="stat-card"><div class="stat-icon yellow">🚨</div><div><div class="stat-value">${d.activeRequests}</div><div class="stat-label">Active Requests</div></div></div>
+        </div>
+        <div class="grid-4" style="margin-bottom:28px">
+          <div class="stat-card"><div class="stat-icon green">✅</div><div><div class="stat-value">${d.fulfilledRequests}</div><div class="stat-label">Fulfilled</div></div></div>
+          <div class="stat-card"><div class="stat-icon blue">🩸</div><div><div class="stat-value">${d.totalDonations}</div><div class="stat-label">Total Donations</div></div></div>
+          <div class="stat-card"><div class="stat-icon yellow">⏳</div><div><div class="stat-value">${d.pendingVerificationDonors}</div><div class="stat-label">Pending Donors</div></div></div>
+          <div class="stat-card"><div class="stat-icon red">⚠️</div><div><div class="stat-value">${d.duplicateRequests}</div><div class="stat-label">Flagged Requests</div></div></div>
+        </div>
+        <div class="grid-2">
+          <div class="card">
+            <div class="card-header"><h3>Blood Group Distribution (Donors)</h3></div>
+            <div class="card-body">
+              ${d.bloodGroupStats.map(bg => `
+                <div style="display:flex;align-items:center;gap:12px;margin-bottom:10px">
+                  <div style="width:44px;font-weight:700;color:var(--secondary)">${bg._id}</div>
+                  <div style="flex:1;background:var(--gray-200);border-radius:4px;height:10px;overflow:hidden">
+                    <div style="background:var(--secondary);height:100%;width:${Math.min(100, bg.count / Math.max(...d.bloodGroupStats.map(b=>b.count)) * 100)}%"></div>
+                  </div>
+                  <div style="width:30px;text-align:right;font-size:0.85rem;color:var(--gray-600)">${bg.count}</div>
+                </div>`).join('')}
+            </div>
+          </div>
+          <div class="card">
+            <div class="card-header"><h3>Quick Actions</h3></div>
+            <div class="card-body" style="display:flex;flex-direction:column;gap:10px">
+              <button class="btn btn-primary" onclick="goSection('sec-donors')">💉 Verify Donors (${d.pendingVerificationDonors} pending)</button>
+              <button class="btn btn-outline" onclick="goSection('sec-banks')">🏥 Manage Blood Banks (${d.pendingVerificationBanks} pending)</button>
+              <button class="btn btn-outline" onclick="goSection('sec-requests')">🚨 View Active Requests (${d.activeRequests})</button>
+              <button class="btn btn-outline" onclick="goSection('sec-add-bank')">➕ Add Blood Bank</button>
+            </div>
+          </div>
+        </div>`;
+    } catch (err) {
+      container.innerHTML = `<div class="alert alert-error">❌ ${err.message}</div>`;
+    }
+  };
+
+  // ---- DONORS ----
+  const loadDonors = async () => {
+    const container = document.getElementById('donorsList');
+    container.innerHTML = '<div class="spinner"></div>';
+    const bg = document.getElementById('donorBGFilter')?.value;
+    const verified = document.getElementById('donorVerifiedFilter')?.value;
+    try {
+      const params = {};
+      if (bg) params.bloodGroup = bg;
+      if (verified !== '') params.isVerified = verified;
+      const data = await Donors.getAll(params);
+      const donors = data.data || [];
+      container.innerHTML = donors.length
+        ? `<div class="table-container"><table class="data-table">
+          <thead><tr><th>Name</th><th>Blood Group</th><th>City</th><th>Phone</th><th>Status</th><th>Actions</th></tr></thead>
+          <tbody>${donors.map(d => `
+            <tr>
+              <td><strong>${d.name}</strong><br><small style="color:var(--gray-400)">${d.email}</small></td>
+              <td><strong style="color:var(--secondary)">${d.bloodGroup}</strong></td>
+              <td>${d.location?.city || '—'}</td>
+              <td>${d.phone}</td>
+              <td>
+                ${d.isVerified ? '<span class="badge badge-verified">✓ Verified</span>' : '<span class="badge badge-unverified">Unverified</span>'}
+                <br>
+                <span class="badge ${d.availability?.isAvailable ? 'badge-available' : 'badge-unavailable'}" style="margin-top:4px">${d.availability?.isAvailable ? 'Available' : 'Unavailable'}</span>
+              </td>
+              <td>
+                ${!d.isVerified ? `<button class="btn btn-success btn-sm" onclick="verifyDonor('${d._id}', this)">✅ Verify</button>` : ''}
+                <button class="btn btn-outline-danger btn-sm" onclick="deactivateUser('${d._id}', 'donor', this)" style="margin-top:4px">Deactivate</button>
+              </td>
+            </tr>`).join('')}
+          </tbody></table></div>`
+        : '<div class="empty-state"><div class="empty-icon">💉</div><p>No donors found</p></div>';
+    } catch (err) {
+      container.innerHTML = `<div class="alert alert-error">❌ ${err.message}</div>`;
+    }
+  };
+
+  // ---- PATIENTS ----
+  const loadPatients = async () => {
+    const container = document.getElementById('patientsList');
+    container.innerHTML = '<div class="spinner"></div>';
+    const search = document.getElementById('patientSearch')?.value;
+    try {
+      const params = {};
+      if (search) params.search = search;
+      const data = await AdminAPI.getUsers(params);
+      const patients = data.data || [];
+      container.innerHTML = patients.length
+        ? `<div class="table-container"><table class="data-table">
+          <thead><tr><th>Name</th><th>Email</th><th>Blood Group</th><th>City</th><th>Phone</th><th>Actions</th></tr></thead>
+          <tbody>${patients.map(p => `
+            <tr>
+              <td><strong>${p.name}</strong></td>
+              <td>${p.email}</td>
+              <td><strong style="color:var(--secondary)">${p.bloodGroup || '—'}</strong></td>
+              <td>${p.location?.city || '—'}</td>
+              <td>${p.phone}</td>
+              <td>
+                ${p.isActive ? `<button class="btn btn-outline-danger btn-sm" onclick="deactivateUser('${p._id}', 'patient', this)">Deactivate</button>` : '<span class="badge badge-unavailable">Deactivated</span>'}
+              </td>
+            </tr>`).join('')}
+          </tbody></table></div>`
+        : '<div class="empty-state"><div class="empty-icon">🏥</div><p>No patients found</p></div>';
+    } catch (err) {
+      container.innerHTML = `<div class="alert alert-error">❌ ${err.message}</div>`;
+    }
+  };
+
+  // ---- REQUESTS ----
+  const loadRequests = async () => {
+    const container = document.getElementById('requestsList');
+    container.innerHTML = '<div class="spinner"></div>';
+    const status = document.getElementById('reqStatusFilter')?.value;
+    try {
+      const params = {};
+      if (status) params.status = status;
+      const data = await Emergency.getAll(params);
+      const requests = data.data || [];
+      container.innerHTML = requests.length
+        ? `<div class="table-container"><table class="data-table">
+          <thead><tr><th>Patient</th><th>Blood</th><th>Hospital</th><th>Urgency</th><th>Status</th><th>Date</th><th>Actions</th></tr></thead>
+          <tbody>${requests.map(r => `
+            <tr ${r.isDuplicate ? 'style="background:#fff7ed"' : ''}>
+              <td><strong>${r.patientName}</strong><br><small style="color:var(--gray-400)">${r.requester?.name || ''}</small></td>
+              <td><strong style="color:var(--secondary)">${r.bloodGroup}</strong></td>
+              <td>${r.hospital?.name || '—'}<br><small>${r.hospital?.city || ''}</small></td>
+              <td>${urgencyBadge(r.urgencyLevel)}</td>
+              <td>${statusBadge(r.status)}${r.isDuplicate ? '<br><span class="badge badge-critical">⚠ Flagged</span>' : ''}</td>
+              <td style="font-size:0.82rem">${formatDate(r.createdAt)}</td>
+              <td>
+                ${!r.isDuplicate && r.status === 'active' ? `<button class="btn btn-outline-danger btn-sm" onclick="flagDuplicate('${r._id}', true, this)">🚩 Flag</button>` : ''}
+                ${r.isDuplicate ? `<button class="btn btn-outline btn-sm" onclick="flagDuplicate('${r._id}', false, this)">Clear</button>` : ''}
+              </td>
+            </tr>`).join('')}
+          </tbody></table></div>`
+        : '<div class="empty-state"><div class="empty-icon">🚨</div><p>No requests found</p></div>';
+    } catch (err) {
+      container.innerHTML = `<div class="alert alert-error">❌ ${err.message}</div>`;
+    }
+  };
+
+  // ---- BLOOD BANKS ----
+  const loadBanks = async () => {
+    const container = document.getElementById('banksList');
+    if (container.querySelector('table')) return;
+    container.innerHTML = '<div class="spinner"></div>';
+    try {
+      const data = await BloodBanks.getAll();
+      const banks = data.data || [];
+      container.innerHTML = banks.length
+        ? `<div class="table-container"><table class="data-table">
+          <thead><tr><th>Name</th><th>City</th><th>Phone</th><th>Status</th><th>Actions</th></tr></thead>
+          <tbody>${banks.map(b => `
+            <tr>
+              <td><strong>${b.name}</strong><br><small style="color:var(--gray-400)">${b.registrationNumber}</small></td>
+              <td>${b.address?.city}, ${b.address?.state}</td>
+              <td>${b.phone}</td>
+              <td>${b.isVerified ? '<span class="badge badge-verified">✓ Verified</span>' : '<span class="badge badge-unverified">Unverified</span>'}</td>
+              <td>
+                ${!b.isVerified ? `<button class="btn btn-success btn-sm" onclick="verifyBank('${b._id}', this)">✅ Verify</button>` : ''}
+                <button class="btn btn-outline btn-sm" onclick="openInventoryModal('${b._id}')" style="margin-top:4px">📊 Inventory</button>
+              </td>
+            </tr>`).join('')}
+          </tbody></table></div>`
+        : '<div class="empty-state"><div class="empty-icon">🏥</div><p>No blood banks registered</p><button class="btn btn-primary" style="margin-top:16px" onclick="goSection(\'sec-add-bank\')">Add Blood Bank</button></div>';
+    } catch (err) {
+      container.innerHTML = `<div class="alert alert-error">❌ ${err.message}</div>`;
+    }
+  };
+
+  // ---- ADMIN ACTIONS ----
+  const verifyDonor = async (id, btn) => {
+    btn.disabled = true; btn.textContent = 'Verifying...';
+    try {
+      await AdminAPI.verifyDonor(id);
+      showToast('Donor verified successfully', 'success');
+      loadDonors();
+    } catch (err) { showToast(err.message, 'error'); btn.disabled = false; btn.textContent = '✅ Verify'; }
+  };
+
+  const verifyBank = async (id, btn) => {
+    btn.disabled = true; btn.textContent = 'Verifying...';
+    try {
+      await AdminAPI.verifyBloodBank(id);
+      showToast('Blood bank verified', 'success');
+      document.getElementById('banksList').innerHTML = '';
+      loadBanks();
+    } catch (err) { showToast(err.message, 'error'); btn.disabled = false; btn.textContent = '✅ Verify'; }
+  };
+
+  const deactivateUser = async (id, type, btn) => {
+    if (!confirm(`Deactivate this ${type}?`)) return;
+    btn.disabled = true;
+    try {
+      await AdminAPI.deactivateUser(id, type);
+      showToast(`${type} deactivated`, 'success');
+      type === 'donor' ? loadDonors() : loadPatients();
+    } catch (err) { showToast(err.message, 'error'); btn.disabled = false; }
+  };
+
+  const flagDuplicate = async (id, flag, btn) => {
+    if (!confirm(flag ? 'Flag this request as duplicate?' : 'Clear duplicate flag?')) return;
+    btn.disabled = true;
+    try {
+      await AdminAPI.flagDuplicate(id, flag);
+      showToast(flag ? 'Request flagged' : 'Flag cleared', flag ? 'warning' : 'success');
+      loadRequests();
+    } catch (err) { showToast(err.message, 'error'); btn.disabled = false; }
+  };
+
+  const openInventoryModal = (bankId) => {
+    document.getElementById('invBankId').value = bankId;
+    document.getElementById('invUnits').value = '';
+    openModal('inventoryModal');
+  };
+
+  const saveInventory = async () => {
+    const bankId = document.getElementById('invBankId').value;
+    const bloodGroup = document.getElementById('invBloodGroup').value;
+    const units = parseInt(document.getElementById('invUnits').value);
+    if (isNaN(units) || units < 0) { showToast('Enter valid units', 'warning'); return; }
+    try {
+      await BloodBanks.updateInventory(bankId, { bloodGroup, units });
+      showToast('Inventory updated', 'success');
+      closeModal('inventoryModal');
+    } catch (err) { showToast(err.message, 'error'); }
+  };
+
+  // ---- ADD BLOOD BANK ----
+  document.getElementById('addBankForm').addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const btn = document.getElementById('addBankBtn');
+    btn.disabled = true; btn.textContent = 'Adding...';
+    const alertBox = document.getElementById('addBankAlert');
+    alertBox.className = 'hidden';
+    try {
+      await BloodBanks.add({
+        name: document.getElementById('bankName').value.trim(),
+        registrationNumber: document.getElementById('bankRegNum').value.trim(),
+        email: document.getElementById('bankEmail').value.trim(),
+        phone: document.getElementById('bankPhone').value.trim(),
+        address: {
+          street: document.getElementById('bankStreet').value.trim(),
+          city: document.getElementById('bankCity').value.trim(),
+          state: document.getElementById('bankState').value.trim(),
+          pincode: document.getElementById('bankPincode').value.trim()
+        },
+        location: {
+          type: 'Point',
+          coordinates: [
+            parseFloat(document.getElementById('bankLng').value),
+            parseFloat(document.getElementById('bankLat').value)
+          ]
+        },
+        operatingHours: {
+          open: document.getElementById('bankOpen').value,
+          close: document.getElementById('bankClose').value,
+          is24Hours: document.getElementById('bank24hrs').checked
+        }
+      });
+      alertBox.className = 'alert alert-success';
+      alertBox.innerHTML = '✅ Blood bank added successfully!';
+      e.target.reset();
+    } catch (err) {
+      alertBox.className = 'alert alert-error';
+      alertBox.innerHTML = `❌ ${err.message}`;
+    } finally {
+      btn.disabled = false;
+      btn.textContent = 'Add Blood Bank';
+      alertBox.scrollIntoView({ behavior: 'smooth' });
+    }
+  });
+</script>
+</body>
+</html>

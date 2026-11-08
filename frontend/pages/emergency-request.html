@@ -1,0 +1,285 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Emergency Blood Request — BloodConnect</title>
+  <link rel="stylesheet" href="/css/style.css" />
+  <style>
+    body { background: var(--gray-50); }
+    .er-wrap { max-width: 720px; margin: 40px auto; padding: 0 20px 60px; }
+    .er-card { background: white; border-radius: 20px; box-shadow: var(--shadow-md); overflow: hidden; }
+    .er-header {
+      background: linear-gradient(135deg, #7f1d1d, var(--secondary));
+      color: white;
+      padding: 32px 36px;
+    }
+    .er-header h2 { font-size: 1.8rem; margin-bottom: 8px; }
+    .er-header p { opacity: 0.9; }
+    .er-body { padding: 36px; }
+    .urgency-selector { display: flex; gap: 10px; flex-wrap: wrap; }
+    .urgency-btn {
+      flex: 1;
+      min-width: 100px;
+      padding: 14px 10px;
+      border: 2px solid var(--gray-200);
+      border-radius: 12px;
+      background: white;
+      cursor: pointer;
+      text-align: center;
+      transition: var(--transition);
+      font-weight: 600;
+    }
+    .urgency-btn .u-icon { font-size: 1.6rem; display: block; margin-bottom: 6px; }
+    .urgency-btn:hover { border-color: var(--secondary); }
+    .urgency-btn.selected.moderate { border-color: var(--warning); background: #fffbeb; color: var(--warning); }
+    .urgency-btn.selected.urgent { border-color: var(--secondary); background: #fef2f2; color: var(--secondary); }
+    .urgency-btn.selected.critical { border-color: #be185d; background: #fdf4ff; color: #be185d; }
+    .section-divider {
+      font-size: 0.82rem; font-weight: 700; text-transform: uppercase;
+      letter-spacing: 0.1em; color: var(--gray-400); margin: 24px 0 16px;
+      display: flex; align-items: center; gap: 10px;
+    }
+    .section-divider::after { content: ''; flex: 1; height: 1px; background: var(--gray-200); }
+    .success-screen {
+      text-align: center;
+      padding: 60px 36px;
+    }
+    .success-screen .icon { font-size: 4rem; margin-bottom: 20px; }
+  </style>
+</head>
+<body>
+<nav class="navbar">
+  <div class="navbar-inner">
+    <a href="/index.html" class="navbar-brand">
+      <div class="brand-icon">🩸</div>
+      <div><span class="brand-name">BloodConnect</span><span class="brand-sub">Emergency Coordination System</span></div>
+    </a>
+    <div class="nav-actions">
+      <a href="/pages/login.html" class="btn btn-outline btn-sm" id="loginLink">Login</a>
+    </div>
+  </div>
+</nav>
+
+<div class="er-wrap">
+  <div class="breadcrumb">
+    <a href="/index.html">Home</a>
+    <span class="breadcrumb-sep">›</span>
+    <span>Emergency Request</span>
+  </div>
+
+  <div class="er-card" id="mainCard">
+    <div class="er-header">
+      <h2>🚨 Emergency Blood Request</h2>
+      <p>Fill in the details below. Nearby compatible donors will be notified immediately via SMS and email.</p>
+    </div>
+
+    <div class="er-body">
+      <div class="alert alert-warning" style="margin-bottom:20px">
+        ⚠️ <strong>For genuine medical emergencies only.</strong> False or duplicate requests will be flagged and may result in account suspension.
+      </div>
+
+      <div id="alertBox" class="hidden"></div>
+
+      <form id="emergencyForm" novalidate>
+        <!-- Urgency Level -->
+        <div class="section-divider">Urgency Level</div>
+        <div class="form-group">
+          <div class="urgency-selector">
+            <div class="urgency-btn moderate" data-urgency="moderate" onclick="selectUrgency('moderate', this)">
+              <span class="u-icon">🟡</span>Moderate<br><small style="font-weight:400;font-size:0.75rem">Within 24 hrs</small>
+            </div>
+            <div class="urgency-btn urgent selected urgent" data-urgency="urgent" onclick="selectUrgency('urgent', this)">
+              <span class="u-icon">🟠</span>Urgent<br><small style="font-weight:400;font-size:0.75rem">Within a few hours</small>
+            </div>
+            <div class="urgency-btn critical" data-urgency="critical" onclick="selectUrgency('critical', this)">
+              <span class="u-icon">🔴</span>Critical<br><small style="font-weight:400;font-size:0.75rem">Immediately</small>
+            </div>
+          </div>
+          <input type="hidden" id="urgencyLevel" value="urgent" />
+        </div>
+
+        <!-- Patient Info -->
+        <div class="section-divider">Patient Information</div>
+        <div class="form-grid">
+          <div class="form-group">
+            <label class="form-label">Patient Name <span class="required">*</span></label>
+            <input type="text" name="patientName" id="patientName" class="form-control" placeholder="Patient's full name" data-required />
+            <div class="form-error" data-error="patientName"></div>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Blood Group Required <span class="required">*</span></label>
+            <select name="bloodGroup" id="bloodGroup" class="form-control" data-required>
+              <option value="">Select Blood Group</option>
+              <option>A+</option><option>A-</option><option>B+</option><option>B-</option>
+              <option>AB+</option><option>AB-</option><option>O+</option><option>O-</option>
+            </select>
+            <div class="form-error" data-error="bloodGroup"></div>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Units Required <span class="required">*</span></label>
+            <input type="number" name="unitsRequired" id="unitsRequired" class="form-control" placeholder="Number of units" data-required min="1" max="10" value="1" />
+            <div class="form-error" data-error="unitsRequired"></div>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Contact Phone <span class="required">*</span></label>
+            <input type="tel" name="contactPhone" id="contactPhone" class="form-control" placeholder="Phone at hospital" data-required />
+            <div class="form-error" data-error="contactPhone"></div>
+          </div>
+        </div>
+
+        <!-- Hospital Info -->
+        <div class="section-divider">Hospital Information</div>
+        <div class="form-grid">
+          <div class="form-group">
+            <label class="form-label">Hospital Name <span class="required">*</span></label>
+            <input type="text" name="hospitalName" id="hospitalName" class="form-control" placeholder="Name of hospital" data-required />
+            <div class="form-error" data-error="hospitalName"></div>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Hospital City <span class="required">*</span></label>
+            <input type="text" name="hospitalCity" id="hospitalCity" class="form-control" placeholder="City" data-required />
+            <div class="form-error" data-error="hospitalCity"></div>
+          </div>
+          <div class="form-group" style="grid-column:1/-1">
+            <label class="form-label">Hospital Address <span class="required">*</span></label>
+            <input type="text" name="hospitalAddress" id="hospitalAddress" class="form-control" placeholder="Full address for donors to navigate to" data-required />
+            <div class="form-error" data-error="hospitalAddress"></div>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Hospital Contact Number</label>
+            <input type="tel" name="hospitalContact" id="hospitalContact" class="form-control" placeholder="Hospital phone" />
+          </div>
+        </div>
+
+        <!-- Location -->
+        <div class="section-divider">Location for Donor Matching</div>
+        <div class="form-group">
+          <button type="button" class="btn btn-outline" onclick="captureLocation()">📍 Use My GPS Location</button>
+          <p style="font-size:0.82rem;color:var(--gray-500);margin-top:6px">
+            Providing your GPS location helps match you with the nearest donors faster.
+          </p>
+          <div id="locationStatus" style="margin-top:8px;font-size:0.85rem;color:var(--success)"></div>
+        </div>
+
+        <!-- Notes -->
+        <div class="form-group">
+          <label class="form-label">Additional Notes</label>
+          <textarea name="additionalNotes" id="additionalNotes" class="form-control" rows="3"
+                    placeholder="Any additional information (ward number, attending doctor, etc.)"></textarea>
+        </div>
+
+        <div class="alert alert-info" style="margin-bottom:16px">
+          📋 By submitting this request, you confirm that this is a genuine medical emergency. The request will expire in 24 hours.
+        </div>
+
+        <button type="submit" class="btn btn-emergency btn-block btn-lg" id="submitBtn">
+          🚨 Submit Emergency Request
+        </button>
+      </form>
+    </div>
+  </div>
+</div>
+
+<script src="/js/api.js"></script>
+<script src="/js/utils.js"></script>
+<script>
+  let selectedUrgency = 'urgent';
+  let locationCoords = null;
+
+  window.addEventListener('DOMContentLoaded', () => {
+    const user = getUser();
+    if (user) {
+      const dbUrl = user.role === 'donor' ? '/pages/donor-dashboard.html' : '/pages/patient-dashboard.html';
+      document.getElementById('loginLink').outerHTML = `<a href="${dbUrl}" class="btn btn-outline btn-sm">Dashboard</a>`;
+    }
+  });
+
+  const selectUrgency = (level, el) => {
+    selectedUrgency = level;
+    document.getElementById('urgencyLevel').value = level;
+    document.querySelectorAll('.urgency-btn').forEach(b => b.classList.remove('selected'));
+    el.classList.add('selected', level);
+  };
+
+  const captureLocation = async () => {
+    try {
+      showLoading();
+      const coords = await getCurrentLocation();
+      locationCoords = coords;
+      document.getElementById('locationStatus').innerHTML = `✅ Location captured: ${coords.latitude.toFixed(4)}, ${coords.longitude.toFixed(4)}`;
+      hideLoading();
+    } catch (err) {
+      hideLoading();
+      showToast(err.message, 'warning');
+    }
+  };
+
+  document.getElementById('emergencyForm').addEventListener('submit', async (e) => {
+    e.preventDefault();
+    if (!validateForm(e.target)) return;
+
+    // Must be logged in as patient
+    const user = getUser();
+    if (!user || user.role !== 'patient') {
+      showToast('Please login as a patient to submit an emergency request', 'error');
+      setTimeout(() => window.location.href = '/pages/login.html', 1500);
+      return;
+    }
+
+    const btn = document.getElementById('submitBtn');
+    btn.disabled = true;
+    btn.textContent = '⏳ Submitting request...';
+    document.getElementById('alertBox').className = 'hidden';
+
+    const payload = {
+      patientName: document.getElementById('patientName').value.trim(),
+      bloodGroup: document.getElementById('bloodGroup').value,
+      unitsRequired: parseInt(document.getElementById('unitsRequired').value),
+      urgencyLevel: selectedUrgency,
+      contactPhone: document.getElementById('contactPhone').value.trim(),
+      hospital: {
+        name: document.getElementById('hospitalName').value.trim(),
+        address: document.getElementById('hospitalAddress').value.trim(),
+        city: document.getElementById('hospitalCity').value.trim(),
+        contactNumber: document.getElementById('hospitalContact').value.trim()
+      },
+      additionalNotes: document.getElementById('additionalNotes').value.trim()
+    };
+
+    if (locationCoords) {
+      payload.location = {
+        type: 'Point',
+        coordinates: [locationCoords.longitude, locationCoords.latitude],
+        address: document.getElementById('hospitalAddress').value.trim()
+      };
+    }
+
+    try {
+      const data = await Emergency.create(payload);
+      // Show success screen
+      document.getElementById('mainCard').innerHTML = `
+        <div class="success-screen">
+          <div class="icon">✅</div>
+          <h2 style="color:var(--success)">Request Submitted!</h2>
+          <p style="font-size:1.05rem;margin:12px 0 24px">Your emergency request has been created successfully.</p>
+          <div class="alert alert-success" style="display:inline-block;padding:14px 24px">
+            🔔 <strong>${data.notifiedCount || 0}</strong> nearby donor(s) have been notified via SMS and email.
+          </div>
+          <div style="margin-top:24px;display:flex;gap:12px;justify-content:center;flex-wrap:wrap">
+            <a href="/pages/patient-dashboard.html" class="btn btn-primary btn-lg">📊 Track Request</a>
+            <a href="/index.html" class="btn btn-outline btn-lg">← Back to Home</a>
+          </div>
+        </div>`;
+    } catch (err) {
+      const alertBox = document.getElementById('alertBox');
+      alertBox.className = 'alert alert-error';
+      alertBox.innerHTML = `❌ ${err.message}`;
+      btn.disabled = false;
+      btn.textContent = '🚨 Submit Emergency Request';
+      btn.scrollIntoView({ behavior: 'smooth' });
+    }
+  });
+</script>
+</body>
+</html>

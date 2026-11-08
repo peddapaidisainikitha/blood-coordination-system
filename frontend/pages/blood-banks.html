@@ -1,0 +1,269 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Blood Banks — BloodConnect</title>
+  <link rel="stylesheet" href="/css/style.css" />
+  <style>
+    .bank-detail-card {
+      background: white;
+      border-radius: 16px;
+      overflow: hidden;
+      box-shadow: var(--shadow);
+      margin-bottom: 20px;
+      transition: var(--transition);
+    }
+    .bank-detail-card:hover { box-shadow: var(--shadow-md); }
+    .bank-card-header {
+      background: linear-gradient(135deg, var(--primary-dark), var(--primary));
+      color: white;
+      padding: 20px 24px;
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+    }
+    .bank-card-body { padding: 20px 24px; }
+    .inventory-row {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 10px 0;
+      border-bottom: 1px solid var(--gray-100);
+    }
+    .inventory-row:last-child { border-bottom: none; }
+    .inv-bg-tag {
+      width: 44px;
+      height: 44px;
+      border-radius: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 800;
+      font-size: 0.9rem;
+      flex-shrink: 0;
+    }
+  </style>
+</head>
+<body>
+<nav class="navbar">
+  <div class="navbar-inner">
+    <a href="/index.html" class="navbar-brand">
+      <div class="brand-icon">🩸</div>
+      <div><span class="brand-name">BloodConnect</span><span class="brand-sub">Emergency Coordination System</span></div>
+    </a>
+    <ul class="nav-links">
+      <li><a href="/index.html">Home</a></li>
+      <li><a href="/pages/blood-search.html">Find Blood</a></li>
+      <li><a href="/pages/blood-banks.html" class="active">Blood Banks</a></li>
+      <li><a href="/pages/contact.html">Contact</a></li>
+    </ul>
+    <div class="nav-actions">
+      <a href="/pages/login.html" class="btn btn-outline btn-sm">Login</a>
+      <a href="/pages/emergency-request.html" class="btn btn-danger btn-sm">🚨 Emergency</a>
+    </div>
+  </div>
+</nav>
+
+<section style="background:linear-gradient(135deg,var(--primary-dark),var(--primary));padding:50px 5%;color:white">
+  <div style="max-width:1200px;margin:0 auto">
+    <h1>🏥 Blood Banks Directory</h1>
+    <p style="opacity:0.9;margin-top:8px">Find registered blood banks, view inventory and contact information.</p>
+    <div style="margin-top:24px;display:flex;gap:10px;flex-wrap:wrap">
+      <input type="text" id="filterCity" class="form-control" placeholder="Search by city..." style="max-width:240px" />
+      <select id="filterBG" class="form-control" style="max-width:180px">
+        <option value="">All Blood Groups</option>
+        <option>A+</option><option>A-</option><option>B+</option><option>B-</option>
+        <option>AB+</option><option>AB-</option><option>O+</option><option>O-</option>
+      </select>
+      <button class="btn btn-primary" style="background:white;color:var(--primary)" onclick="loadBanks()">🔍 Search</button>
+      <button class="btn" style="background:rgba(255,255,255,0.15);color:white;border:2px solid rgba(255,255,255,0.3)" onclick="useLocation()">📍 Near Me</button>
+    </div>
+  </div>
+</section>
+
+<section style="padding:40px 5%">
+  <div style="max-width:1200px;margin:0 auto">
+    <div id="bankCount" style="margin-bottom:16px;color:var(--gray-500);font-size:0.9rem"></div>
+    <div id="banksList"><div class="spinner"></div></div>
+  </div>
+</section>
+
+<!-- Single Bank Modal -->
+<div class="modal-overlay" id="bankModal">
+  <div class="modal" style="max-width:680px">
+    <div class="modal-header">
+      <h3 id="modalBankName">Blood Bank Details</h3>
+      <button class="modal-close" onclick="closeModal('bankModal')">✕</button>
+    </div>
+    <div class="modal-body" id="modalBankBody"><div class="spinner"></div></div>
+  </div>
+</div>
+
+<script src="/js/api.js"></script>
+<script src="/js/utils.js"></script>
+<script>
+  let userLocation = null;
+
+  window.addEventListener('DOMContentLoaded', () => {
+    const params = new URLSearchParams(window.location.search);
+    const id = params.get('id');
+    if (id) { loadBanks(); setTimeout(() => showBankDetail(id), 500); }
+    else loadBanks();
+  });
+
+  const useLocation = async () => {
+    try {
+      showLoading();
+      userLocation = await getCurrentLocation();
+      hideLoading();
+      showToast('Location detected', 'success');
+      loadBanksNearby();
+    } catch (err) {
+      hideLoading();
+      showToast(err.message, 'warning');
+    }
+  };
+
+  const loadBanks = async () => {
+    const container = document.getElementById('banksList');
+    container.innerHTML = '<div class="spinner"></div>';
+    const city = document.getElementById('filterCity').value.trim();
+    const bg = document.getElementById('filterBG').value;
+
+    try {
+      let data;
+      if (bg) {
+        data = await BloodBanks.search({ bloodGroup: bg, city });
+        renderSearchResults(data.data || []);
+        return;
+      }
+      data = await BloodBanks.getAll({ city });
+      renderBanks(data.data || []);
+    } catch (err) {
+      container.innerHTML = `<div class="alert alert-error">❌ ${err.message}</div>`;
+    }
+  };
+
+  const loadBanksNearby = async () => {
+    const container = document.getElementById('banksList');
+    container.innerHTML = '<div class="spinner"></div>';
+    try {
+      const data = await BloodBanks.getNearby({
+        latitude: userLocation.latitude,
+        longitude: userLocation.longitude,
+        maxDistance: 50000
+      });
+      renderBanks(data.data || []);
+    } catch (err) {
+      container.innerHTML = `<div class="alert alert-error">❌ ${err.message}</div>`;
+    }
+  };
+
+  const renderBanks = (banks) => {
+    const container = document.getElementById('banksList');
+    document.getElementById('bankCount').textContent = `Showing ${banks.length} blood bank(s)`;
+    if (!banks.length) {
+      container.innerHTML = '<div class="empty-state"><div class="empty-icon">🏥</div><h3>No blood banks found</h3><p>Try a different location or contact us to register a new blood bank.</p></div>';
+      return;
+    }
+    container.innerHTML = `<div class="grid-auto">${banks.map(b => bankCard(b)).join('')}</div>`;
+  };
+
+  const renderSearchResults = (results) => {
+    const container = document.getElementById('banksList');
+    document.getElementById('bankCount').textContent = `Found ${results.length} result(s)`;
+    if (!results.length) {
+      container.innerHTML = '<div class="empty-state"><div class="empty-icon">🩸</div><h3>No matching inventory found</h3><p>The selected blood group may not be available in the searched area.</p></div>';
+      return;
+    }
+    const byBank = {};
+    results.forEach(r => {
+      const bankId = r.bloodBank?._id || r.bloodBank;
+      if (!byBank[bankId]) byBank[bankId] = { bank: r.bloodBank, items: [] };
+      byBank[bankId].items.push(r);
+    });
+    container.innerHTML = `<div class="grid-auto">${Object.values(byBank).map(entry => bankCard(entry.bank, entry.items)).join('')}</div>`;
+  };
+
+  const bankCard = (b, inventory = null) => {
+    if (!b) return '';
+    const isAvailable = inventory ? inventory.some(i => ['available','low'].includes(i.status)) : true;
+    return `
+      <div class="bank-detail-card">
+        <div class="bank-card-header">
+          <div>
+            <div style="font-size:1.05rem;font-weight:700">🏥 ${b.name || 'Blood Bank'}</div>
+            <div style="opacity:0.85;font-size:0.85rem;margin-top:4px">📍 ${b.address?.city || ''}, ${b.address?.state || ''}</div>
+            ${b.distanceKm ? `<div style="opacity:0.8;font-size:0.82rem;margin-top:2px">📏 ${b.distanceKm} km away</div>` : ''}
+          </div>
+          <div style="display:flex;flex-direction:column;align-items:flex-end;gap:6px">
+            ${b.isVerified ? '<span style="background:rgba(255,255,255,0.2);padding:3px 10px;border-radius:12px;font-size:0.78rem">✓ Verified</span>' : ''}
+            ${b.operatingHours?.is24Hours ? '<span style="background:rgba(255,255,255,0.15);padding:3px 10px;border-radius:12px;font-size:0.78rem">🕐 24 hrs</span>' : ''}
+          </div>
+        </div>
+        <div class="bank-card-body">
+          <div style="display:flex;gap:16px;flex-wrap:wrap;font-size:0.85rem;color:var(--gray-600);margin-bottom:12px">
+            <div>📞 ${b.phone || '—'}</div>
+            ${b.operatingHours && !b.operatingHours.is24Hours ? `<div>🕐 ${b.operatingHours.open} – ${b.operatingHours.close}</div>` : ''}
+          </div>
+          ${inventory ? `
+            <div style="margin-bottom:12px">
+              ${inventory.map(inv => `
+                <div class="inventory-row">
+                  <div class="inv-bg-tag" style="background:${inv.status === 'available' ? '#fef2f2' : inv.status === 'low' ? '#fffbeb' : '#f3f4f6'};color:${inv.status === 'available' ? 'var(--secondary)' : inv.status === 'low' ? 'var(--warning)' : 'var(--gray-400)'}">
+                    ${inv.bloodGroup}
+                  </div>
+                  <div style="flex:1">
+                    <div style="font-weight:600">${inv.units} units</div>
+                    <div style="font-size:0.78rem;color:var(--gray-400)">Updated: ${timeAgo(inv.lastUpdated)}</div>
+                  </div>
+                  <span class="badge badge-${inv.status}">${inv.status}</span>
+                </div>`).join('')}
+            </div>` : ''}
+          <div style="display:flex;gap:10px;flex-wrap:wrap">
+            <button class="btn btn-outline btn-sm" onclick="showBankDetail('${b._id}')">View Inventory</button>
+            <a href="/pages/emergency-request.html" class="btn btn-danger btn-sm">🚨 Request Blood</a>
+          </div>
+        </div>
+      </div>`;
+  };
+
+  const showBankDetail = async (id) => {
+    document.getElementById('modalBankName').textContent = 'Loading...';
+    document.getElementById('modalBankBody').innerHTML = '<div class="spinner"></div>';
+    openModal('bankModal');
+    try {
+      const data = await BloodBanks.getById(id);
+      const b = data.data;
+      document.getElementById('modalBankName').textContent = b.name;
+      const inv = b.inventory || [];
+      document.getElementById('modalBankBody').innerHTML = `
+        <div style="margin-bottom:16px">
+          <p>📍 ${b.address?.street}, ${b.address?.city}, ${b.address?.state} — ${b.address?.pincode}</p>
+          <p style="margin-top:6px">📞 ${b.phone}</p>
+          ${b.operatingHours?.is24Hours ? '<p>🕐 Open 24 hours</p>' : `<p>🕐 ${b.operatingHours?.open} – ${b.operatingHours?.close}</p>`}
+        </div>
+        <h4 style="margin-bottom:12px">Blood Inventory</h4>
+        ${inv.length ? inv.map(i => `
+          <div class="inventory-row">
+            <div class="inv-bg-tag" style="background:#fef2f2;color:var(--secondary)">${i.bloodGroup}</div>
+            <div style="flex:1">
+              <div style="font-weight:600">${i.units} units available</div>
+              <div style="font-size:0.78rem;color:var(--gray-400)">Last updated: ${timeAgo(i.lastUpdated)}</div>
+            </div>
+            <span class="badge badge-${i.status}">${i.status}</span>
+          </div>`).join('')
+        : '<p style="color:var(--gray-400)">No inventory data reported by this blood bank.</p>'}
+        <div style="margin-top:20px;padding-top:16px;border-top:1px solid var(--gray-200)">
+          <div class="alert alert-info">
+            ℹ️ Inventory data is reported by the blood bank. Always call ahead to confirm availability.
+          </div>
+        </div>`;
+    } catch (err) {
+      document.getElementById('modalBankBody').innerHTML = `<div class="alert alert-error">❌ ${err.message}</div>`;
+    }
+  };
+</script>
+</body>
+</html>

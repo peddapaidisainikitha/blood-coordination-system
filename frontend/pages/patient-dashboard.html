@@ -1,0 +1,365 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Patient Dashboard — BloodConnect</title>
+  <link rel="stylesheet" href="/css/style.css" />
+</head>
+<body>
+<nav class="navbar">
+  <div class="navbar-inner">
+    <a href="/index.html" class="navbar-brand">
+      <div class="brand-icon">🩸</div>
+      <div><span class="brand-name">BloodConnect</span><span class="brand-sub">Emergency Coordination System</span></div>
+    </a>
+    <div class="nav-actions">
+      <a href="/pages/emergency-request.html" class="btn btn-danger btn-sm">🚨 New Request</a>
+      <button class="btn btn-outline btn-sm" onclick="Auth.logout()">Logout</button>
+    </div>
+    <div class="hamburger" id="sidebarToggle">
+      <span></span><span></span><span></span>
+    </div>
+  </div>
+</nav>
+
+<div class="dashboard-layout">
+  <!-- Sidebar -->
+  <aside class="sidebar" id="sidebar">
+    <div class="sidebar-header">
+      <div id="userAvatar" style="width:44px;height:44px;border-radius:50%;background:rgba(255,255,255,0.2);display:flex;align-items:center;justify-content:center;font-size:1.3rem;margin-bottom:10px">👤</div>
+      <div class="sidebar-user-name" id="sidebarName">Loading...</div>
+      <div class="sidebar-user-role">Patient</div>
+    </div>
+    <nav class="sidebar-nav">
+      <div class="sidebar-section-label">Overview</div>
+      <a class="sidebar-nav-item active" data-section="sec-overview">
+        <span class="nav-icon">📊</span> Dashboard
+      </a>
+      <div class="sidebar-section-label">Requests</div>
+      <a class="sidebar-nav-item" data-section="sec-my-requests">
+        <span class="nav-icon">🚨</span> My Requests
+      </a>
+      <a class="sidebar-nav-item" data-section="sec-new-request">
+        <span class="nav-icon">➕</span> New Request
+      </a>
+      <div class="sidebar-section-label">Search</div>
+      <a class="sidebar-nav-item" data-section="sec-search">
+        <span class="nav-icon">🔍</span> Find Blood
+      </a>
+      <a class="sidebar-nav-item" data-section="sec-banks">
+        <span class="nav-icon">🏥</span> Blood Banks
+      </a>
+      <div class="sidebar-section-label">Account</div>
+      <a class="sidebar-nav-item" data-section="sec-profile">
+        <span class="nav-icon">👤</span> My Profile
+      </a>
+      <a class="sidebar-nav-item" href="/pages/contact.html">
+        <span class="nav-icon">📞</span> Help & Support
+      </a>
+    </nav>
+  </aside>
+
+  <!-- Main Content -->
+  <main class="dashboard-main">
+
+    <!-- Overview Section -->
+    <div class="dashboard-section active" id="sec-overview">
+      <h2 style="margin-bottom:24px">Welcome back, <span id="welcomeName">Patient</span>! 👋</h2>
+      <div class="grid-4" style="margin-bottom:28px">
+        <div class="stat-card">
+          <div class="stat-icon red">🚨</div>
+          <div><div class="stat-value" id="statTotal">0</div><div class="stat-label">Total Requests</div></div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-icon blue">⏳</div>
+          <div><div class="stat-value" id="statActive">0</div><div class="stat-label">Active Requests</div></div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-icon green">✅</div>
+          <div><div class="stat-value" id="statFulfilled">0</div><div class="stat-label">Fulfilled</div></div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-icon yellow">📋</div>
+          <div><div class="stat-value" id="statPending">0</div><div class="stat-label">Pending</div></div>
+        </div>
+      </div>
+
+      <div class="grid-2">
+        <div class="card">
+          <div class="card-header"><h3>Recent Requests</h3><a href="#" onclick="goSection('sec-my-requests')" style="font-size:0.85rem;color:var(--primary)">View all →</a></div>
+          <div class="card-body" id="recentRequests">
+            <div class="spinner"></div>
+          </div>
+        </div>
+        <div class="card">
+          <div class="card-header"><h3>Quick Actions</h3></div>
+          <div class="card-body" style="display:flex;flex-direction:column;gap:12px">
+            <a href="/pages/emergency-request.html" class="btn btn-emergency">🚨 Emergency Request</a>
+            <button class="btn btn-outline" onclick="goSection('sec-search')">🔍 Search Blood Banks</button>
+            <button class="btn btn-outline" onclick="goSection('sec-banks')">🏥 View Blood Banks</button>
+            <a href="/pages/blood-search.html" class="btn btn-outline" style="text-decoration:none">💉 Find Donors</a>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- My Requests Section -->
+    <div class="dashboard-section" id="sec-my-requests">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:24px;flex-wrap:wrap;gap:12px">
+        <h2>My Blood Requests</h2>
+        <a href="/pages/emergency-request.html" class="btn btn-danger">➕ New Request</a>
+      </div>
+      <div id="requestsList"><div class="spinner"></div></div>
+    </div>
+
+    <!-- New Request Section (inline) -->
+    <div class="dashboard-section" id="sec-new-request">
+      <h2 style="margin-bottom:20px">Submit New Blood Request</h2>
+      <div class="card" style="max-width:680px">
+        <div class="card-body">
+          <div class="alert alert-warning" style="margin-bottom:20px">
+            ⚠️ Submit only genuine emergency requests.
+          </div>
+          <p style="margin-bottom:16px">For a full emergency request form with all options, use the dedicated page:</p>
+          <a href="/pages/emergency-request.html" class="btn btn-emergency btn-lg">🚨 Open Emergency Request Form</a>
+        </div>
+      </div>
+    </div>
+
+    <!-- Blood Search Section -->
+    <div class="dashboard-section" id="sec-search">
+      <h2 style="margin-bottom:24px">Find Blood</h2>
+      <div class="card" style="margin-bottom:20px">
+        <div class="card-body">
+          <div style="display:flex;gap:12px;flex-wrap:wrap;align-items:flex-end">
+            <div style="flex:1;min-width:140px">
+              <label class="form-label">Blood Group</label>
+              <select id="dbSearchBG" class="form-control">
+                <option value="">All</option>
+                <option>A+</option><option>A-</option><option>B+</option><option>B-</option>
+                <option>AB+</option><option>AB-</option><option>O+</option><option>O-</option>
+              </select>
+            </div>
+            <div style="flex:2;min-width:160px">
+              <label class="form-label">City</label>
+              <input type="text" id="dbSearchCity" class="form-control" placeholder="Enter city" />
+            </div>
+            <div>
+              <label class="form-label">&nbsp;</label>
+              <button class="btn btn-primary" onclick="dbSearch()">Search</button>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div id="dbSearchResults"></div>
+    </div>
+
+    <!-- Blood Banks Section -->
+    <div class="dashboard-section" id="sec-banks">
+      <h2 style="margin-bottom:24px">Blood Banks</h2>
+      <div id="banksList"><div class="spinner"></div></div>
+    </div>
+
+    <!-- Profile Section -->
+    <div class="dashboard-section" id="sec-profile">
+      <h2 style="margin-bottom:24px">My Profile</h2>
+      <div class="card" style="max-width:580px">
+        <div class="card-body" id="profileContent"><div class="spinner"></div></div>
+      </div>
+    </div>
+
+  </main>
+</div>
+
+<script src="/js/api.js"></script>
+<script src="/js/utils.js"></script>
+<script>
+  window.addEventListener('DOMContentLoaded', async () => {
+    if (!requireAuth(['patient'])) return;
+    initSidebar();
+    document.getElementById('sidebarToggle').addEventListener('click', () => {
+      document.getElementById('sidebar').classList.toggle('open');
+    });
+    await loadUserData();
+    loadOverview();
+  });
+
+  const goSection = (id) => {
+    document.querySelectorAll('.dashboard-section').forEach(s => s.classList.remove('active'));
+    document.getElementById(id)?.classList.add('active');
+    document.querySelectorAll('.sidebar-nav-item').forEach(n => {
+      n.classList.toggle('active', n.dataset.section === id);
+    });
+  };
+
+  const loadUserData = async () => {
+    try {
+      const data = await Auth.me();
+      const user = data.user;
+      document.getElementById('sidebarName').textContent = user.name;
+      document.getElementById('welcomeName').textContent = user.name.split(' ')[0];
+
+      document.getElementById('profileContent').innerHTML = `
+        <div style="display:flex;flex-direction:column;gap:16px">
+          <div style="display:flex;gap:14px;align-items:center;padding-bottom:16px;border-bottom:1px solid var(--gray-200)">
+            <div style="width:60px;height:60px;border-radius:50%;background:var(--primary);color:white;display:flex;align-items:center;justify-content:center;font-size:1.5rem;font-weight:700">${user.name[0]}</div>
+            <div>
+              <div style="font-size:1.1rem;font-weight:700">${user.name}</div>
+              <div style="font-size:0.85rem;color:var(--gray-500)">${user.email}</div>
+              <span class="badge ${user.isVerified ? 'badge-verified' : 'badge-unverified'}" style="margin-top:4px">${user.isVerified ? '✓ Verified' : 'Pending Verification'}</span>
+            </div>
+          </div>
+          <div class="grid-2" style="gap:12px">
+            <div><div style="font-size:0.8rem;color:var(--gray-500);margin-bottom:3px">Blood Group</div><strong style="color:var(--secondary)">${user.bloodGroup || '—'}</strong></div>
+            <div><div style="font-size:0.8rem;color:var(--gray-500);margin-bottom:3px">Phone</div><strong>${user.phone || '—'}</strong></div>
+            <div><div style="font-size:0.8rem;color:var(--gray-500);margin-bottom:3px">City</div><strong>${user.location?.city || '—'}</strong></div>
+            <div><div style="font-size:0.8rem;color:var(--gray-500);margin-bottom:3px">Role</div><strong>Patient</strong></div>
+          </div>
+        </div>`;
+    } catch { showToast('Failed to load profile', 'error'); }
+  };
+
+  const loadOverview = async () => {
+    try {
+      const data = await Emergency.getMyRequests();
+      const requests = data.data || [];
+
+      const total = requests.length;
+      const active = requests.filter(r => r.status === 'active').length;
+      const fulfilled = requests.filter(r => r.status === 'fulfilled').length;
+      const pending = requests.filter(r => r.status === 'pending').length;
+
+      document.getElementById('statTotal').textContent = total;
+      document.getElementById('statActive').textContent = active;
+      document.getElementById('statFulfilled').textContent = fulfilled;
+      document.getElementById('statPending').textContent = pending;
+
+      const recent = requests.slice(0, 5);
+      document.getElementById('recentRequests').innerHTML = recent.length
+        ? recent.map(r => renderRequestRow(r)).join('')
+        : '<div class="empty-state"><div class="empty-icon">📋</div><p>No requests yet</p></div>';
+
+      // Also load requests list
+      document.getElementById('requestsList').innerHTML = requests.length
+        ? requests.map(r => renderRequestCard(r)).join('')
+        : '<div class="empty-state"><div class="empty-icon">📋</div><h3>No requests yet</h3><p>Submit your first emergency request.</p><a href="/pages/emergency-request.html" class="btn btn-danger" style="margin-top:16px">🚨 New Request</a></div>';
+    } catch (err) {
+      document.getElementById('recentRequests').innerHTML = `<div class="alert alert-error">❌ ${err.message}</div>`;
+    }
+  };
+
+  const renderRequestRow = (r) => `
+    <div style="display:flex;justify-content:space-between;align-items:center;padding:10px 0;border-bottom:1px solid var(--gray-100)">
+      <div>
+        <div style="font-weight:600;color:var(--gray-800)">${r.patientName} — <span style="color:var(--secondary)">${r.bloodGroup}</span></div>
+        <div style="font-size:0.8rem;color:var(--gray-500)">${r.hospital?.name || ''} • ${timeAgo(r.createdAt)}</div>
+      </div>
+      ${statusBadge(r.status)}
+    </div>`;
+
+  const renderRequestCard = (r) => `
+    <div class="card" style="margin-bottom:16px">
+      <div class="card-body">
+        <div style="display:flex;justify-content:space-between;align-items:flex-start;flex-wrap:wrap;gap:10px">
+          <div>
+            <div style="font-size:1.05rem;font-weight:700;color:var(--gray-900)">${r.patientName}</div>
+            <div style="display:flex;gap:10px;align-items:center;margin-top:6px;flex-wrap:wrap">
+              <span style="background:#fef2f2;color:var(--secondary);font-weight:700;padding:4px 10px;border-radius:6px">${r.bloodGroup}</span>
+              ${urgencyBadge(r.urgencyLevel)}
+              ${statusBadge(r.status)}
+            </div>
+          </div>
+          ${r.status === 'active' ? `<button class="btn btn-outline-danger btn-sm" onclick="cancelRequest('${r._id}', this)">Cancel</button>` : ''}
+        </div>
+        <div style="margin-top:14px;display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:10px;font-size:0.85rem;color:var(--gray-600)">
+          <div>🏥 ${r.hospital?.name || '—'}</div>
+          <div>📍 ${r.hospital?.city || '—'}</div>
+          <div>💉 ${r.unitsRequired} unit(s)</div>
+          <div>🕐 ${timeAgo(r.createdAt)}</div>
+        </div>
+        ${r.status === 'fulfilled' && r.fulfilledBy ? `
+          <div class="alert alert-success" style="margin-top:12px;padding:10px 14px">
+            ✅ Fulfilled by a donor. Thank you for using BloodConnect!
+          </div>` : ''}
+        ${r.notifiedDonors?.length ? `
+          <div style="margin-top:10px;font-size:0.83rem;color:var(--gray-500)">
+            🔔 ${r.notifiedDonors.length} donor(s) notified
+            | Accepted: ${r.notifiedDonors.filter(n=>n.response==='accepted').length}
+            | Declined: ${r.notifiedDonors.filter(n=>n.response==='declined').length}
+          </div>` : ''}
+      </div>
+    </div>`;
+
+  const cancelRequest = async (id, btn) => {
+    if (!confirm('Cancel this request?')) return;
+    btn.disabled = true;
+    try {
+      await Emergency.cancel(id);
+      showToast('Request cancelled', 'success');
+      loadOverview();
+    } catch (err) {
+      showToast(err.message, 'error');
+      btn.disabled = false;
+    }
+  };
+
+  const dbSearch = async () => {
+    const bg = document.getElementById('dbSearchBG').value;
+    const city = document.getElementById('dbSearchCity').value.trim();
+    const container = document.getElementById('dbSearchResults');
+    container.innerHTML = '<div class="spinner"></div>';
+    try {
+      const params = {};
+      if (bg) params.bloodGroup = bg;
+      if (city) params.city = city;
+      const data = await BloodBanks.search(params);
+      const items = data.data || [];
+      container.innerHTML = items.length
+        ? items.map(item => `
+          <div class="bank-card">
+            <div class="bank-header">
+              <div>
+                <div class="bank-name">🏥 ${item.bloodBank?.name || 'Blood Bank'}</div>
+                <div class="bank-address">📍 ${item.bloodBank?.address?.city || ''}</div>
+              </div>
+              <span class="badge ${item.status === 'available' ? 'badge-available' : item.status === 'low' ? 'badge-low' : 'badge-unavailable'}">${item.status}</span>
+            </div>
+            <div style="margin-top:10px;font-size:0.9rem;color:var(--gray-700)">
+              🩸 <strong>${item.bloodGroup}</strong> — ${item.units} units available
+              <div style="font-size:0.78rem;color:var(--gray-400);margin-top:3px">Last updated: ${timeAgo(item.lastUpdated)}</div>
+            </div>
+          </div>`).join('')
+        : '<div class="empty-state"><div class="empty-icon">🏥</div><p>No results found</p></div>';
+    } catch (err) {
+      container.innerHTML = `<div class="alert alert-error">❌ ${err.message}</div>`;
+    }
+  };
+
+  // Load blood banks list
+  document.querySelector('[data-section="sec-banks"]')?.addEventListener('click', loadBanksList);
+  const loadBanksList = async () => {
+    const container = document.getElementById('banksList');
+    if (container.querySelector('.card')) return; // Already loaded
+    try {
+      const data = await BloodBanks.getAll();
+      const banks = data.data || [];
+      container.innerHTML = banks.length
+        ? `<div class="grid-auto">${banks.map(b => `
+          <div class="card">
+            <div class="card-body">
+              <h3 style="margin-bottom:8px">🏥 ${b.name}</h3>
+              <p style="font-size:0.85rem">📍 ${b.address?.city}, ${b.address?.state}</p>
+              <p style="font-size:0.85rem">📞 ${b.phone}</p>
+              <p style="font-size:0.85rem">${b.operatingHours?.is24Hours ? '🕐 Open 24 hours' : `🕐 ${b.operatingHours?.open} – ${b.operatingHours?.close}`}</p>
+              ${b.isVerified ? '<span class="badge badge-verified" style="margin-top:8px">✓ Verified</span>' : '<span class="badge badge-unverified" style="margin-top:8px">Pending</span>'}
+            </div>
+          </div>`).join('')}</div>`
+        : '<div class="empty-state"><div class="empty-icon">🏥</div><p>No blood banks registered yet.</p></div>';
+    } catch (err) {
+      container.innerHTML = `<div class="alert alert-error">❌ ${err.message}</div>`;
+    }
+  };
+</script>
+</body>
+</html>

@@ -1,0 +1,469 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Emergency Blood Coordination System</title>
+  <link rel="stylesheet" href="/css/style.css" />
+  <style>
+    /* ---- HERO SEARCH ---- */
+    .hero-search-wrap {
+      background: white;
+      border-radius: 16px;
+      padding: 28px 32px;
+      max-width: 700px;
+      box-shadow: 0 20px 40px rgba(0,0,0,0.15);
+      margin-top: 40px;
+    }
+    .hero-search-wrap h3 { color: var(--gray-800); margin-bottom: 18px; font-size: 1.1rem; }
+    .hs-row { display: flex; gap: 10px; flex-wrap: wrap; }
+    .hs-row select, .hs-row input {
+      flex: 1;
+      min-width: 140px;
+      padding: 11px 14px;
+      border: 2px solid var(--gray-200);
+      border-radius: 8px;
+      font-size: 0.95rem;
+      outline: none;
+      transition: border-color 0.2s;
+    }
+    .hs-row select:focus, .hs-row input:focus { border-color: var(--primary-light); }
+
+    /* ---- HOW IT WORKS ---- */
+    .step-card {
+      background: white;
+      border-radius: 16px;
+      padding: 28px 24px;
+      text-align: center;
+      box-shadow: var(--shadow);
+      position: relative;
+      transition: var(--transition);
+    }
+    .step-card:hover { transform: translateY(-4px); box-shadow: var(--shadow-md); }
+    .step-num {
+      width: 44px;
+      height: 44px;
+      border-radius: 50%;
+      background: var(--primary);
+      color: white;
+      font-weight: 700;
+      font-size: 1.1rem;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin: 0 auto 16px;
+    }
+    .step-icon { font-size: 2.4rem; margin-bottom: 14px; }
+
+    /* ---- BLOOD GROUPS SECTION ---- */
+    .bg-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 16px;
+      max-width: 600px;
+      margin: 0 auto;
+    }
+    .bg-card {
+      background: white;
+      border: 2px solid var(--gray-200);
+      border-radius: 12px;
+      padding: 20px 10px;
+      text-align: center;
+      cursor: pointer;
+      transition: var(--transition);
+    }
+    .bg-card:hover { border-color: var(--secondary); transform: translateY(-3px); }
+    .bg-card .bg-label { font-size: 1.6rem; font-weight: 800; color: var(--secondary); }
+    .bg-card .bg-name { font-size: 0.75rem; color: var(--gray-500); margin-top: 4px; }
+
+    /* ---- EMERGENCY CTA ---- */
+    .emergency-cta {
+      background: linear-gradient(135deg, #7f1d1d, var(--secondary));
+      border-radius: 20px;
+      padding: 60px 40px;
+      text-align: center;
+      color: white;
+    }
+    .emergency-cta h2 { font-size: 2.2rem; margin-bottom: 16px; }
+    .emergency-cta p { opacity: 0.9; margin-bottom: 32px; font-size: 1.05rem; max-width: 500px; margin-left: auto; margin-right: auto; }
+
+    /* ---- FEATURE ICONS ---- */
+    .feature-icon-wrap {
+      width: 64px;
+      height: 64px;
+      border-radius: 18px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.8rem;
+      margin-bottom: 18px;
+    }
+
+    /* ---- TESTIMONIAL ---- */
+    .testimonial-card {
+      background: white;
+      border-radius: 16px;
+      padding: 28px;
+      box-shadow: var(--shadow);
+      border-top: 4px solid var(--primary);
+    }
+    .testimonial-card p { font-style: italic; color: var(--gray-600); margin-bottom: 20px; }
+    .testimonial-author { display: flex; align-items: center; gap: 12px; }
+    .testimonial-avatar {
+      width: 44px;
+      height: 44px;
+      border-radius: 50%;
+      background: var(--primary);
+      color: white;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 700;
+    }
+  </style>
+</head>
+<body>
+
+<!-- Navbar -->
+<nav class="navbar">
+  <div class="navbar-inner">
+    <a href="/index.html" class="navbar-brand">
+      <div class="brand-icon">🩸</div>
+      <div>
+        <span class="brand-name">BloodConnect</span>
+        <span class="brand-sub">Emergency Coordination System</span>
+      </div>
+    </a>
+    <ul class="nav-links" id="navLinks">
+      <li><a href="/index.html" class="active">Home</a></li>
+      <li><a href="/pages/about.html">About</a></li>
+      <li><a href="/pages/blood-search.html">Find Blood</a></li>
+      <li><a href="/pages/blood-banks.html">Blood Banks</a></li>
+      <li><a href="/pages/contact.html">Contact</a></li>
+    </ul>
+    <div class="nav-actions" id="navActions">
+      <a href="/pages/login.html" class="btn btn-outline btn-sm" id="loginBtn">Login</a>
+      <a href="/pages/register-patient.html" class="btn btn-danger btn-sm">Register</a>
+    </div>
+    <div class="hamburger" onclick="document.getElementById('navLinks').classList.toggle('open')">
+      <span></span><span></span><span></span>
+    </div>
+  </div>
+</nav>
+
+<!-- Hero Section -->
+<section class="hero">
+  <div class="hero-content">
+    <div class="section-badge" style="background:rgba(255,255,255,0.15);color:white">🚨 Emergency Response System</div>
+    <h1>Save Lives with<br><span style="color:#fca5a5">Emergency Blood</span><br>Coordination</h1>
+    <p>Connect patients with nearby blood banks and willing donors instantly. Every second counts in a blood emergency.</p>
+    <div class="hero-actions">
+      <a href="/pages/emergency-request.html" class="btn btn-emergency btn-lg">🚨 Emergency Request</a>
+      <a href="/pages/blood-search.html" class="btn btn-lg" style="background:rgba(255,255,255,0.15);color:white;border:2px solid rgba(255,255,255,0.3)">🔍 Find Blood</a>
+      <a href="/pages/register-donor.html" class="btn btn-lg" style="background:rgba(255,255,255,0.15);color:white;border:2px solid rgba(255,255,255,0.3)">💉 Become a Donor</a>
+    </div>
+
+    <!-- Hero Quick Search -->
+    <div class="hero-search-wrap">
+      <h3>🔍 Quick Blood Search</h3>
+      <div class="hs-row">
+        <select id="quickBloodGroup">
+          <option value="">Select Blood Group</option>
+          <option>A+</option><option>A-</option><option>B+</option><option>B-</option>
+          <option>AB+</option><option>AB-</option><option>O+</option><option>O-</option>
+        </select>
+        <input type="text" id="quickCity" placeholder="Enter city or area" />
+        <button class="btn btn-primary" onclick="quickSearch()">Search Now</button>
+      </div>
+    </div>
+
+    <div class="hero-stats">
+      <div class="hero-stat"><div class="value" id="statDonors">—</div><div class="label">Registered Donors</div></div>
+      <div class="hero-stat"><div class="value" id="statBanks">—</div><div class="label">Blood Banks</div></div>
+      <div class="hero-stat"><div class="value" id="statFulfilled">—</div><div class="label">Requests Fulfilled</div></div>
+      <div class="hero-stat"><div class="value" id="statDonations">—</div><div class="label">Total Donations</div></div>
+    </div>
+  </div>
+</section>
+
+<!-- Blood Group Cards -->
+<section class="section" style="background:white">
+  <div class="container">
+    <div class="section-header">
+      <div class="section-badge">Blood Groups</div>
+      <h2>Find Blood by Group</h2>
+      <p>Click on a blood group to instantly find available donors and blood banks near you.</p>
+    </div>
+    <div class="bg-grid">
+      <div class="bg-card" onclick="searchBloodGroup('A+')">
+        <div class="bg-label">A+</div>
+        <div class="bg-name">A Positive</div>
+      </div>
+      <div class="bg-card" onclick="searchBloodGroup('A-')">
+        <div class="bg-label" style="color:var(--primary)">A-</div>
+        <div class="bg-name">A Negative</div>
+      </div>
+      <div class="bg-card" onclick="searchBloodGroup('B+')">
+        <div class="bg-label">B+</div>
+        <div class="bg-name">B Positive</div>
+      </div>
+      <div class="bg-card" onclick="searchBloodGroup('B-')">
+        <div class="bg-label" style="color:var(--primary)">B-</div>
+        <div class="bg-name">B Negative</div>
+      </div>
+      <div class="bg-card" onclick="searchBloodGroup('AB+')">
+        <div class="bg-label">AB+</div>
+        <div class="bg-name">AB Positive</div>
+      </div>
+      <div class="bg-card" onclick="searchBloodGroup('AB-')">
+        <div class="bg-label" style="color:var(--primary)">AB-</div>
+        <div class="bg-name">AB Negative</div>
+      </div>
+      <div class="bg-card" onclick="searchBloodGroup('O+')">
+        <div class="bg-label">O+</div>
+        <div class="bg-name">O Positive</div>
+      </div>
+      <div class="bg-card" onclick="searchBloodGroup('O-')">
+        <div class="bg-label" style="color:var(--primary)">O-</div>
+        <div class="bg-name">O Negative</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Features -->
+<section class="section" style="background:var(--gray-50)">
+  <div class="container">
+    <div class="section-header">
+      <div class="section-badge">Our Features</div>
+      <h2>Everything You Need in an Emergency</h2>
+      <p>A complete platform built to save lives through faster blood coordination.</p>
+    </div>
+    <div class="grid-3">
+      <div class="card card-body" style="text-align:center">
+        <div class="feature-icon-wrap" style="background:#fef2f2;margin:0 auto"><span>🗺️</span></div>
+        <h3>Location-Based Search</h3>
+        <p style="margin-top:10px">Find blood banks and donors closest to you using real-time GPS location and Google Maps.</p>
+      </div>
+      <div class="card card-body" style="text-align:center">
+        <div class="feature-icon-wrap" style="background:#eff6ff;margin:0 auto"><span>⚡</span></div>
+        <h3>Instant Notifications</h3>
+        <p style="margin-top:10px">Compatible donors receive SMS and email alerts the moment an emergency request is created.</p>
+      </div>
+      <div class="card card-body" style="text-align:center">
+        <div class="feature-icon-wrap" style="background:#f0fdf4;margin:0 auto"><span>🩸</span></div>
+        <h3>Real-Time Inventory</h3>
+        <p style="margin-top:10px">View live blood availability across all registered blood banks with last-updated timestamps.</p>
+      </div>
+      <div class="card card-body" style="text-align:center">
+        <div class="feature-icon-wrap" style="background:#fffbeb;margin:0 auto"><span>✅</span></div>
+        <h3>Donor Eligibility Check</h3>
+        <p style="margin-top:10px">We automatically track donation history to ensure only eligible donors respond to requests.</p>
+      </div>
+      <div class="card card-body" style="text-align:center">
+        <div class="feature-icon-wrap" style="background:#fdf4ff;margin:0 auto"><span>🔐</span></div>
+        <h3>Secure & Verified</h3>
+        <p style="margin-top:10px">All donors and blood banks are admin-verified. Your personal data is protected and encrypted.</p>
+      </div>
+      <div class="card card-body" style="text-align:center">
+        <div class="feature-icon-wrap" style="background:#fff0f3;margin:0 auto"><span>📊</span></div>
+        <h3>Live Dashboard</h3>
+        <p style="margin-top:10px">Track request status, donor responses, and donation history from your personal dashboard.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- How it Works -->
+<section class="section" style="background:white">
+  <div class="container">
+    <div class="section-header">
+      <div class="section-badge">How It Works</div>
+      <h2>Simple Steps to Save a Life</h2>
+    </div>
+    <div class="grid-4">
+      <div class="step-card">
+        <div class="step-num">1</div>
+        <div class="step-icon">📝</div>
+        <h3>Register</h3>
+        <p style="margin-top:8px">Create your account as a patient or blood donor in under 2 minutes.</p>
+      </div>
+      <div class="step-card">
+        <div class="step-num">2</div>
+        <div class="step-icon">🚨</div>
+        <h3>Create Request</h3>
+        <p style="margin-top:8px">Fill in patient details, required blood group, and hospital information.</p>
+      </div>
+      <div class="step-card">
+        <div class="step-num">3</div>
+        <div class="step-icon">🔔</div>
+        <h3>Donors Notified</h3>
+        <p style="margin-top:8px">Nearby compatible donors are instantly alerted via SMS and email.</p>
+      </div>
+      <div class="step-card">
+        <div class="step-num">4</div>
+        <div class="step-icon">💚</div>
+        <h3>Life Saved</h3>
+        <p style="margin-top:8px">Donors accept the request, coordinate with the hospital, and donate blood.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Emergency CTA -->
+<section class="section-sm" style="padding: 40px 5%">
+  <div class="container">
+    <div class="emergency-cta">
+      <div style="font-size:3rem;margin-bottom:16px">🚨</div>
+      <h2>Need Blood Urgently?</h2>
+      <p>Don't wait. Create an emergency request right now and reach dozens of nearby donors within minutes.</p>
+      <div style="display:flex;gap:14px;justify-content:center;flex-wrap:wrap">
+        <a href="/pages/emergency-request.html" class="btn btn-lg" style="background:white;color:var(--secondary);font-weight:700">🩸 Create Emergency Request</a>
+        <a href="/pages/blood-search.html" class="btn btn-lg" style="background:rgba(255,255,255,0.15);color:white;border:2px solid rgba(255,255,255,0.5)">🔍 Search Blood Banks</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Testimonials -->
+<section class="section" style="background:var(--gray-50)">
+  <div class="container">
+    <div class="section-header">
+      <div class="section-badge">Stories</div>
+      <h2>Lives We've Helped Save</h2>
+    </div>
+    <div class="grid-3">
+      <div class="testimonial-card">
+        <p>"My father needed O- blood urgently after surgery. BloodConnect found a donor within 40 minutes. I'm forever grateful."</p>
+        <div class="testimonial-author">
+          <div class="testimonial-avatar">R</div>
+          <div>
+            <div style="font-weight:700;color:var(--gray-800)">Ravi Kumar</div>
+            <div style="font-size:0.82rem;color:var(--gray-500)">Patient's family member</div>
+          </div>
+        </div>
+      </div>
+      <div class="testimonial-card">
+        <p>"I registered as a donor and got a notification for an emergency A+ request just 2 km away. Felt amazing to help."</p>
+        <div class="testimonial-author">
+          <div class="testimonial-avatar" style="background:var(--success)">P</div>
+          <div>
+            <div style="font-weight:700;color:var(--gray-800)">Priya Sharma</div>
+            <div style="font-size:0.82rem;color:var(--gray-500)">Blood Donor, 4 donations</div>
+          </div>
+        </div>
+      </div>
+      <div class="testimonial-card">
+        <p>"The admin dashboard makes it easy to monitor our blood bank inventory and verify donors. Excellent system."</p>
+        <div class="testimonial-author">
+          <div class="testimonial-avatar" style="background:var(--warning)">D</div>
+          <div>
+            <div style="font-weight:700;color:var(--gray-800)">Dr. Anita Mehta</div>
+            <div style="font-size:0.82rem;color:var(--gray-500)">Hospital Administrator</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Footer -->
+<footer>
+  <div class="footer-grid">
+    <div>
+      <div class="footer-brand-name">🩸 BloodConnect</div>
+      <p style="font-size:0.9rem;margin-bottom:20px">Emergency Blood Coordination and Donor Response System. Saving lives through technology and community.</p>
+      <div style="display:flex;gap:12px">
+        <span style="font-size:1.5rem;cursor:pointer">📘</span>
+        <span style="font-size:1.5rem;cursor:pointer">🐦</span>
+        <span style="font-size:1.5rem;cursor:pointer">📸</span>
+      </div>
+    </div>
+    <div>
+      <h4>Quick Links</h4>
+      <ul>
+        <li><a href="/index.html">Home</a></li>
+        <li><a href="/pages/about.html">About Us</a></li>
+        <li><a href="/pages/blood-search.html">Find Blood</a></li>
+        <li><a href="/pages/blood-banks.html">Blood Banks</a></li>
+        <li><a href="/pages/contact.html">Contact</a></li>
+      </ul>
+    </div>
+    <div>
+      <h4>For Donors</h4>
+      <ul>
+        <li><a href="/pages/register-donor.html">Register as Donor</a></li>
+        <li><a href="/pages/login.html">Donor Login</a></li>
+        <li><a href="/pages/donor-dashboard.html">Donor Dashboard</a></li>
+        <li><a href="/pages/about.html#eligibility">Eligibility Criteria</a></li>
+      </ul>
+    </div>
+    <div>
+      <h4>For Patients</h4>
+      <ul>
+        <li><a href="/pages/register-patient.html">Patient Register</a></li>
+        <li><a href="/pages/emergency-request.html">Emergency Request</a></li>
+        <li><a href="/pages/patient-dashboard.html">Patient Dashboard</a></li>
+        <li><a href="/pages/blood-banks.html">Blood Banks</a></li>
+      </ul>
+    </div>
+  </div>
+  <div class="footer-bottom">
+    <span>© 2024 BloodConnect Emergency Coordination System. All rights reserved.</span>
+    <span>🩸 Every drop counts. Be a hero.</span>
+  </div>
+</footer>
+
+<script src="/js/api.js"></script>
+<script src="/js/utils.js"></script>
+<script>
+  // Update nav based on login state
+  window.addEventListener('DOMContentLoaded', () => {
+    const user = getUser();
+    if (user) {
+      const actions = document.getElementById('navActions');
+      if (actions) {
+        const dashboardUrl = user.role === 'donor' ? '/pages/donor-dashboard.html'
+          : user.role === 'admin' ? '/pages/admin-dashboard.html'
+          : '/pages/patient-dashboard.html';
+        actions.innerHTML = `
+          <a href="${dashboardUrl}" class="btn btn-outline btn-sm">Dashboard</a>
+          <button class="btn btn-danger btn-sm" onclick="Auth.logout()">Logout</button>
+        `;
+      }
+    }
+
+    // Load stats
+    loadStats();
+  });
+
+  const loadStats = async () => {
+    try {
+      const res = await apiFetch('/admin/stats');
+      if (res.success) {
+        const d = res.data;
+        document.getElementById('statDonors').textContent = (d.totalDonors || 0).toLocaleString();
+        document.getElementById('statBanks').textContent = (d.totalBloodBanks || 0).toLocaleString();
+        document.getElementById('statFulfilled').textContent = (d.fulfilledRequests || 0).toLocaleString();
+        document.getElementById('statDonations').textContent = (d.totalDonations || 0).toLocaleString();
+      }
+    } catch {
+      // Stats are not critical — fail silently
+      document.getElementById('statDonors').textContent = '—';
+    }
+  };
+
+  const quickSearch = () => {
+    const bg = document.getElementById('quickBloodGroup').value;
+    const city = document.getElementById('quickCity').value.trim();
+    if (!bg) { showToast('Please select a blood group', 'warning'); return; }
+    const params = new URLSearchParams({ bloodGroup: bg, city });
+    window.location.href = `/pages/blood-search.html?${params}`;
+  };
+
+  const searchBloodGroup = (bg) => {
+    window.location.href = `/pages/blood-search.html?bloodGroup=${encodeURIComponent(bg)}`;
+  };
+</script>
+</body>
+</html>

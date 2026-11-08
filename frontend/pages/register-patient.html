@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Patient Registration — BloodConnect</title>
+  <link rel="stylesheet" href="/css/style.css" />
+  <style>
+    body { background: var(--gray-50); }
+    .reg-wrap { max-width: 680px; margin: 40px auto; padding: 0 20px 60px; }
+    .reg-card { background: white; border-radius: 20px; padding: 40px; box-shadow: var(--shadow-md); }
+    .reg-header { text-align: center; margin-bottom: 32px; }
+    .reg-header .icon { font-size: 3rem; }
+    .reg-header h2 { color: var(--primary-dark); margin-top: 10px; }
+    .reg-header p { color: var(--gray-500); }
+    .section-divider {
+      font-size: 0.82rem; font-weight: 700; text-transform: uppercase;
+      letter-spacing: 0.1em; color: var(--gray-400); margin: 24px 0 16px;
+      display: flex; align-items: center; gap: 10px;
+    }
+    .section-divider::after { content: ''; flex: 1; height: 1px; background: var(--gray-200); }
+  </style>
+</head>
+<body>
+<nav class="navbar">
+  <div class="navbar-inner">
+    <a href="/index.html" class="navbar-brand">
+      <div class="brand-icon">🩸</div>
+      <div><span class="brand-name">BloodConnect</span><span class="brand-sub">Emergency Coordination System</span></div>
+    </a>
+    <div class="nav-actions">
+      <a href="/pages/login.html" class="btn btn-outline btn-sm">Sign In</a>
+      <a href="/pages/register-donor.html" class="btn btn-danger btn-sm">Register as Donor</a>
+    </div>
+  </div>
+</nav>
+
+<div class="reg-wrap">
+  <div class="breadcrumb">
+    <a href="/index.html">Home</a>
+    <span class="breadcrumb-sep">›</span>
+    <span>Patient Registration</span>
+  </div>
+
+  <div class="reg-card">
+    <div class="reg-header">
+      <div class="icon">🏥</div>
+      <h2>Patient Registration</h2>
+      <p>Create your patient account to search for blood and submit emergency requests.</p>
+    </div>
+
+    <div id="alertBox" class="hidden"></div>
+
+    <form id="registerForm" novalidate>
+      <div class="section-divider">Personal Information</div>
+      <div class="form-grid">
+        <div class="form-group">
+          <label class="form-label">Full Name <span class="required">*</span></label>
+          <input type="text" name="name" id="name" class="form-control" placeholder="Your full name"
+                 data-required autocomplete="name" />
+          <div class="form-error" data-error="name"></div>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Email Address <span class="required">*</span></label>
+          <input type="email" name="email" id="email" class="form-control" placeholder="you@email.com"
+                 data-required autocomplete="email" />
+          <div class="form-error" data-error="email"></div>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Phone Number <span class="required">*</span></label>
+          <input type="tel" name="phone" id="phone" class="form-control" placeholder="10-digit number"
+                 data-required autocomplete="tel" />
+          <div class="form-error" data-error="phone"></div>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Blood Group <span class="required">*</span></label>
+          <select name="bloodGroup" id="bloodGroup" class="form-control" data-required>
+            <option value="">Select Blood Group</option>
+            <option>A+</option><option>A-</option><option>B+</option><option>B-</option>
+            <option>AB+</option><option>AB-</option><option>O+</option><option>O-</option>
+          </select>
+          <div class="form-error" data-error="bloodGroup"></div>
+        </div>
+      </div>
+
+      <div class="section-divider">Location</div>
+      <div class="form-grid">
+        <div class="form-group" style="grid-column:1/-1">
+          <label class="form-label">Address</label>
+          <input type="text" name="address" id="address" class="form-control" placeholder="Street address" autocomplete="street-address" />
+        </div>
+        <div class="form-group">
+          <label class="form-label">City <span class="required">*</span></label>
+          <input type="text" name="city" id="city" class="form-control" placeholder="City" data-required autocomplete="address-level2" />
+          <div class="form-error" data-error="city"></div>
+        </div>
+        <div class="form-group">
+          <label class="form-label">State</label>
+          <input type="text" name="state" id="state" class="form-control" placeholder="State" autocomplete="address-level1" />
+        </div>
+        <div class="form-group">
+          <label class="form-label">Pincode</label>
+          <input type="text" name="pincode" id="pincode" class="form-control" placeholder="PIN code" autocomplete="postal-code" />
+        </div>
+      </div>
+
+      <div class="section-divider">Account Security</div>
+      <div class="form-grid">
+        <div class="form-group">
+          <label class="form-label">Password <span class="required">*</span></label>
+          <input type="password" name="password" id="password" class="form-control" placeholder="Min 8 characters"
+                 data-required data-min-length="8" autocomplete="new-password" />
+          <div class="form-error" data-error="password"></div>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Confirm Password <span class="required">*</span></label>
+          <input type="password" name="confirmPassword" id="confirmPassword" class="form-control" placeholder="Repeat password"
+                 data-required data-match="password" autocomplete="new-password" />
+          <div class="form-error" data-error="confirmPassword"></div>
+        </div>
+      </div>
+
+      <div class="form-group" style="margin-top:8px">
+        <label style="display:flex;align-items:flex-start;gap:10px;cursor:pointer;font-size:0.9rem;color:var(--gray-600)">
+          <input type="checkbox" id="agreeTerms" required style="margin-top:3px;flex-shrink:0" />
+          I agree to the <a href="#" style="color:var(--primary)">Terms of Service</a> and <a href="#" style="color:var(--primary)">Privacy Policy</a>.
+        </label>
+      </div>
+
+      <button type="submit" class="btn btn-primary btn-block btn-lg" id="submitBtn" style="margin-top:8px">
+        Create Patient Account
+      </button>
+    </form>
+
+    <p style="text-align:center;margin-top:20px;font-size:0.9rem;color:var(--gray-600)">
+      Already have an account? <a href="/pages/login.html" style="color:var(--primary);font-weight:600">Sign In</a>
+    </p>
+    <p style="text-align:center;margin-top:8px;font-size:0.9rem;color:var(--gray-600)">
+      Want to donate blood? <a href="/pages/register-donor.html" style="color:var(--secondary);font-weight:600">Register as Donor</a>
+    </p>
+  </div>
+</div>
+
+<script src="/js/api.js"></script>
+<script src="/js/utils.js"></script>
+<script>
+  document.getElementById('registerForm').addEventListener('submit', async (e) => {
+    e.preventDefault();
+    if (!validateForm(e.target)) return;
+
+    if (!document.getElementById('agreeTerms').checked) {
+      showToast('Please agree to the Terms of Service', 'warning');
+      return;
+    }
+
+    const btn = document.getElementById('submitBtn');
+    btn.disabled = true;
+    btn.textContent = 'Creating account...';
+    const alertBox = document.getElementById('alertBox');
+    alertBox.className = 'hidden';
+
+    try {
+      const data = await Auth.registerPatient({
+        name: document.getElementById('name').value.trim(),
+        email: document.getElementById('email').value.trim(),
+        phone: document.getElementById('phone').value.trim(),
+        bloodGroup: document.getElementById('bloodGroup').value,
+        password: document.getElementById('password').value,
+        address: document.getElementById('address').value.trim(),
+        city: document.getElementById('city').value.trim(),
+        state: document.getElementById('state').value.trim(),
+        pincode: document.getElementById('pincode').value.trim()
+      });
+
+      setToken(data.token);
+      setUser(data.user);
+      showToast('Registration successful! Redirecting...', 'success');
+      setTimeout(() => window.location.href = '/pages/patient-dashboard.html', 1500);
+    } catch (err) {
+      alertBox.className = 'alert alert-error';
+      alertBox.innerHTML = `❌ ${err.message}`;
+      btn.disabled = false;
+      btn.textContent = 'Create Patient Account';
+    }
+  });
+</script>
+</body>
+</html>
