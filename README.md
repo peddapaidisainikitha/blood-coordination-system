@@ -55,6 +55,19 @@ npm start        # Production
 
 Visit: **http://localhost:5000**
 
+## Vercel Deployment
+
+Import the repository with the project root set to `./`. Add these environment variables to the Vercel project for Production and Preview:
+
+| Variable | Value |
+|----------|-------|
+| `MONGODB_URI` | MongoDB Atlas connection string for the `blood_coordination` database |
+| `JWT_SECRET` | A unique, high-entropy secret; do not reuse the example value |
+| `JWT_EXPIRE` | `7d` |
+| `FRONTEND_URL` | `https://ebdcs.vercel.app` |
+
+Ensure the Atlas Network Access list permits connections from the deployed Vercel functions. Keep credentials in Vercel Environment Variables and out of Git.
+
 ---
 
 ## 🔑 Default Login Credentials (after seeding)
