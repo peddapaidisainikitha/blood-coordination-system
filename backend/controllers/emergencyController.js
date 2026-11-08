@@ -119,7 +119,7 @@ const createRequest = async (req, res) => {
 const getMyRequests = async (req, res) => {
   try {
     const requests = await EmergencyRequest.find({ requester: req.user._id })
-      .populate('fulfilledBy', 'name phone bloodGroup')
+      .populate('fulfilledBy', 'name phone bloodGroup email')
       .sort({ createdAt: -1 });
 
     res.status(200).json({ success: true, count: requests.length, data: requests });

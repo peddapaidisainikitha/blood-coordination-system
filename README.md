@@ -11,7 +11,6 @@ A full-stack web application for emergency blood coordination between patients, 
 - [MongoDB](https://www.mongodb.com/try/download/community) (local) OR a MongoDB Atlas connection string
 - (Optional) Twilio account for SMS alerts
 - (Optional) Gmail or SMTP account for email alerts
-- (Optional) Google Maps API key for maps
 
 ---
 
@@ -63,7 +62,6 @@ Visit: **http://localhost:5000**
 | Role | Email | Password |
 |------|-------|----------|
 | Admin | admin@bloodbank.com | Admin@123456 |
-| Test Donor | testdonor@bloodconnect.in | Donor@123 |
 
 Register your own patient account at: http://localhost:5000/pages/register-patient.html
 
@@ -111,6 +109,8 @@ blood-coordination-system/
 └── frontend/
     ├── css/
     │   └── style.css              # Complete stylesheet
+    ├── data/
+    │   └── blood-banks.json       # Public blood bank directory
     ├── js/
     │   ├── api.js                 # API client
     │   └── utils.js               # UI utilities
@@ -118,7 +118,7 @@ blood-coordination-system/
     │   ├── login.html             # Unified login (patient/donor/admin)
     │   ├── register-patient.html  # Patient registration
     │   ├── register-donor.html    # Donor registration
-    │   ├── blood-search.html      # Search blood banks & donors
+    │   ├── blood-search.html      # Search blood banks by city/state
     │   ├── blood-banks.html       # Blood banks directory
     │   ├── emergency-request.html # Emergency request form
     │   ├── patient-dashboard.html # Patient dashboard
@@ -182,16 +182,6 @@ blood-coordination-system/
 ---
 
 ## ⚙️ Optional Configuration
-
-### Google Maps
-Add your API key to the `.env` file:
-```
-GOOGLE_MAPS_API_KEY=your_key_here
-```
-Then add the Maps script to the pages where map is needed:
-```html
-<script src="https://maps.googleapis.com/maps/api/js?key=YOUR_KEY&callback=initMap"></script>
-```
 
 ### Email Notifications (Gmail)
 1. Enable 2FA on your Gmail account

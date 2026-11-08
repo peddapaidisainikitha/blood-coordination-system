@@ -1,7 +1,6 @@
 /**
  * Database Seed Script
- * Creates initial admin account, sample blood banks with inventory,
- * and a test donor for development purposes.
+ * Creates an initial admin account and sample blood banks with inventory.
  * 
  * Run with: node utils/seedData.js
  */
@@ -10,7 +9,6 @@ const mongoose = require('mongoose');
 const Admin = require('../models/Admin');
 const BloodBank = require('../models/BloodBank');
 const BloodInventory = require('../models/BloodInventory');
-const Donor = require('../models/Donor');
 
 const connectDB = async () => {
   await mongoose.connect(process.env.MONGODB_URI);
@@ -89,43 +87,14 @@ const seedBloodBanks = async () => {
   }
 };
 
-const seedTestDonor = async () => {
-  const existing = await Donor.findOne({ email: 'testdonor@bloodconnect.in' });
-  if (existing) {
-    console.log('Test donor already exists');
-    return;
-  }
-  await Donor.create({
-    name: 'Test Donor',
-    email: 'testdonor@bloodconnect.in',
-    password: 'Donor@123',
-    phone: '9000000001',
-    bloodGroup: 'O+',
-    age: 28,
-    weight: 68,
-    gender: 'male',
-    location: {
-      type: 'Point',
-      coordinates: [77.5946, 12.9716],
-      city: 'Bangalore',
-      state: 'Karnataka'
-    },
-    isVerified: true,
-    availability: { isAvailable: true }
-  });
-  console.log('✅ Test donor created: testdonor@bloodconnect.in / Donor@123');
-};
-
 const run = async () => {
   try {
     await connectDB();
     await seedAdmin();
     await seedBloodBanks();
-    await seedTestDonor();
     console.log('\n🩸 Database seeding complete!\n');
     console.log('Login credentials:');
     console.log(`  Admin:  ${process.env.ADMIN_EMAIL || 'admin@bloodbank.com'} / ${process.env.ADMIN_PASSWORD || 'Admin@123456'}`);
-    console.log('  Donor:  testdonor@bloodconnect.in / Donor@123\n');
   } catch (err) {
     console.error('Seed error:', err.message);
   } finally {

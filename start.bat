@@ -19,7 +19,7 @@ for /f "tokens=5" %%a in ('netstat -ano ^| findstr :5000 2^>nul') do (
 set PATH=%PATH%;C:\Program Files\nodejs
 
 :: Go to backend folder
-cd "C:\Users\Sai nikitha\.kiro\blood-coordination-system\backend"
+cd /d "%~dp0backend"
 
 echo  Starting server...
 echo.

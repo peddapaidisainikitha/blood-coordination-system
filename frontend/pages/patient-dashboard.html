@@ -98,7 +98,7 @@
             <a href="/pages/emergency-request.html" class="btn btn-emergency">🚨 Emergency Request</a>
             <button class="btn btn-outline" onclick="goSection('sec-search')">🔍 Search Blood Banks</button>
             <button class="btn btn-outline" onclick="goSection('sec-banks')">🏥 View Blood Banks</button>
-            <a href="/pages/blood-search.html" class="btn btn-outline" style="text-decoration:none">💉 Find Donors</a>
+            <button class="btn btn-outline" onclick="goSection('sec-search')">💉 Find Available Donors</button>
           </div>
         </div>
       </div>
@@ -142,8 +142,8 @@
               </select>
             </div>
             <div style="flex:2;min-width:160px">
-              <label class="form-label">City</label>
-              <input type="text" id="dbSearchCity" class="form-control" placeholder="Enter city" />
+              <label class="form-label" for="dbSearchCity">City or State</label>
+              <input type="text" id="dbSearchCity" class="form-control" placeholder="Enter city or state" />
             </div>
             <div>
               <label class="form-label">&nbsp;</label>
@@ -153,6 +153,9 @@
         </div>
       </div>
       <div id="dbSearchResults"></div>
+      <h3 style="margin:24px 0 8px">Available Donors</h3>
+      <div class="alert alert-info" style="margin-bottom:16px">Only verified donors who marked themselves available are listed. Their email is shared with you only after they accept your request.</div>
+      <div id="donorSearchResults"></div>
     </div>
 
     <!-- Blood Banks Section -->
@@ -258,6 +261,10 @@
       ${statusBadge(r.status)}
     </div>`;
 
+  const escapeDashboardValue = (value) => String(value ?? '').replace(/[&<>"']/g, (character) => ({
+    '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;'
+  })[character]);
+
   const renderRequestCard = (r) => `
     <div class="card" style="margin-bottom:16px">
       <div class="card-body">
@@ -281,6 +288,7 @@
         ${r.status === 'fulfilled' && r.fulfilledBy ? `
           <div class="alert alert-success" style="margin-top:12px;padding:10px 14px">
             ✅ Fulfilled by a donor. Thank you for using EBDCS!
+            ${r.fulfilledBy.email ? `<div style="margin-top:6px">Contact donor: <a href="mailto:${encodeURIComponent(r.fulfilledBy.email)}">${escapeDashboardValue(r.fulfilledBy.email)}</a></div>` : ''}
           </div>` : ''}
         ${r.notifiedDonors?.length ? `
           <div style="margin-top:10px;font-size:0.83rem;color:var(--gray-500)">
@@ -308,12 +316,18 @@
     const bg = document.getElementById('dbSearchBG').value;
     const city = document.getElementById('dbSearchCity').value.trim();
     const container = document.getElementById('dbSearchResults');
+    const donorContainer = document.getElementById('donorSearchResults');
+    if (!bg && !city) {
+      showToast('Choose a blood group or enter a city to search', 'warning');
+      return;
+    }
+
     container.innerHTML = '<div class="spinner"></div>';
+    donorContainer.innerHTML = city ? '<div class="spinner"></div>' : '<div class="empty-state"><p>Enter a city to find available donors.</p></div>';
     try {
-      const params = {};
-      if (bg) params.bloodGroup = bg;
-      if (city) params.city = city;
-      const data = await BloodBanks.search(params);
+      const data = bg
+        ? await BloodBanks.search({ bloodGroup: bg, city })
+        : await BloodBanks.getAll({ city });
       const items = data.data || [];
       container.innerHTML = items.length
         ? items.map(item => `
@@ -334,10 +348,33 @@
     } catch (err) {
       container.innerHTML = `<div class="alert alert-error">❌ ${err.message}</div>`;
     }
+
+    if (!city) return;
+    try {
+      const donorParams = { city };
+      if (bg) donorParams.bloodGroup = bg;
+      const data = await Donors.getNearby(donorParams);
+      const donors = data.data || [];
+      donorContainer.innerHTML = donors.length
+        ? `<div class="grid-auto">${donors.map(donor => `
+          <div class="donor-card">
+            <div style="display:flex;align-items:center;gap:14px;margin-bottom:12px">
+              <div class="donor-blood-badge">${escapeDashboardValue(donor.bloodGroup)}</div>
+              <div>
+                <div style="font-weight:700;color:var(--gray-800)">${escapeDashboardValue(donor.name || 'Available donor')}</div>
+                <div style="font-size:0.82rem;color:var(--gray-500)">✓ Verified donor</div>
+              </div>
+            </div>
+            <div style="font-size:0.85rem;color:var(--gray-600)">📍 ${escapeDashboardValue([donor.location?.city, donor.location?.state].filter(Boolean).join(', '))}</div>
+            <div style="font-size:0.85rem;color:var(--success);margin-top:6px">Available to donate</div>
+          </div>`).join('')}</div>`
+        : '<div class="empty-state"><div class="empty-icon">💉</div><p>No verified available donors found in this city or state.</p></div>';
+    } catch (err) {
+      donorContainer.innerHTML = `<div class="alert alert-error">❌ ${err.message}</div>`;
+    }
   };
 
   // Load blood banks list
-  document.querySelector('[data-section="sec-banks"]')?.addEventListener('click', loadBanksList);
   const loadBanksList = async () => {
     const container = document.getElementById('banksList');
     if (container.querySelector('.card')) return; // Already loaded
@@ -360,6 +397,8 @@
       container.innerHTML = `<div class="alert alert-error">❌ ${err.message}</div>`;
     }
   };
+
+  document.querySelector('[data-section="sec-banks"]')?.addEventListener('click', loadBanksList);
 </script>
 </body>
 </html>

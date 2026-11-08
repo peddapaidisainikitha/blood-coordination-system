@@ -3,14 +3,18 @@ const DonationHistory = require('../models/DonationHistory');
 const Notification = require('../models/Notification');
 const { getCompatibleDonors } = require('../utils/bloodCompatibility');
 
+const escapeRegex = (value) => value.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+
 // @desc    Find nearby eligible donors
 // @route   GET /api/donors/nearby
 const getNearbyDonors = async (req, res) => {
   try {
-    const { longitude, latitude, bloodGroup, maxDistance = 30000 } = req.query;
+    const { longitude, latitude, bloodGroup, maxDistance = 30000, city, state } = req.query;
 
-    if (!longitude || !latitude) {
-      return res.status(400).json({ success: false, message: 'Location coordinates required' });
+    const hasCoordinates = longitude !== undefined && longitude !== '' && latitude !== undefined && latitude !== '';
+    const searchLocation = city || state;
+    if (!hasCoordinates && !searchLocation) {
+      return res.status(400).json({ success: false, message: 'City, state, or location coordinates are required' });
     }
 
     const compatibleGroups = bloodGroup ? getCompatibleDonors(bloodGroup) : undefined;
@@ -22,6 +26,33 @@ const getNearbyDonors = async (req, res) => {
     };
     if (compatibleGroups) {
       matchQuery.bloodGroup = { $in: compatibleGroups };
+    }
+
+    if (!hasCoordinates) {
+      const locationSearch = new RegExp(escapeRegex(searchLocation.trim()), 'i');
+      const donors = await Donor.find({
+        ...matchQuery,
+        $or: [
+          { 'location.city': locationSearch },
+          { 'location.state': locationSearch }
+        ]
+      })
+        .select('name bloodGroup location availability totalDonations lastDonationDate isVerified')
+        .limit(30)
+        .lean();
+
+      const enriched = donors.map(donor => {
+        const daysSinceLast = donor.lastDonationDate
+          ? Math.floor((Date.now() - new Date(donor.lastDonationDate).getTime()) / (1000 * 60 * 60 * 24))
+          : null;
+        return {
+          ...donor,
+          isEligible: !donor.lastDonationDate || daysSinceLast >= 56,
+          daysSinceLastDonation: daysSinceLast
+        };
+      });
+
+      return res.status(200).json({ success: true, count: enriched.length, data: enriched });
     }
 
     const donors = await Donor.aggregate([
