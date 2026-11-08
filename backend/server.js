@@ -4,6 +4,10 @@ const cors = require('cors');
 const path = require('path');
 const connectDB = require('./config/db');
 const errorHandler = require('./middleware/errorHandler');
+const Donor = require('./models/Donor');
+const BloodBank = require('./models/BloodBank');
+const EmergencyRequest = require('./models/EmergencyRequest');
+const DonationHistory = require('./models/DonationHistory');
 
 const app = express();
 
@@ -42,6 +46,24 @@ app.get('/api/health', (req, res) => {
     timestamp: new Date().toISOString(),
     version: '1.0.0'
   });
+});
+
+app.get('/api/public/stats', async (req, res, next) => {
+  try {
+    const [totalDonors, totalBloodBanks, fulfilledRequests, totalDonations] = await Promise.all([
+      Donor.countDocuments({ isActive: true, isVerified: true }),
+      BloodBank.countDocuments({ isActive: true, isVerified: true }),
+      EmergencyRequest.countDocuments({ status: 'fulfilled' }),
+      DonationHistory.countDocuments()
+    ]);
+
+    res.status(200).json({
+      success: true,
+      data: { totalDonors, totalBloodBanks, fulfilledRequests, totalDonations }
+    });
+  } catch (error) {
+    next(error);
+  }
 });
 
 // Serve frontend for all non-API routes

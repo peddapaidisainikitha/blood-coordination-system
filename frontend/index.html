@@ -1276,7 +1276,7 @@
 
     // Load live stats
     try {
-      const res = await apiFetch('/admin/stats');
+      const res = await apiFetch('/public/stats');
       if (res.success) {
         const d = res.data;
         animateCount('statDonors', d.totalDonors || 0);
