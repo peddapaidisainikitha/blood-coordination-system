@@ -32,47 +32,7 @@
 
 <section class="section" style="background:var(--gray-50)">
   <div class="container">
-    <div class="grid-2" style="gap:40px;align-items:start">
-
-      <!-- Contact Form -->
-      <div class="card">
-        <div class="card-header"><h3>Send Us a Message</h3></div>
-        <div class="card-body">
-          <div id="contactAlert" class="hidden"></div>
-          <form id="contactForm" novalidate>
-            <div class="form-group">
-              <label class="form-label">Your Name <span class="required">*</span></label>
-              <input type="text" name="name" id="contactName" class="form-control" placeholder="Full name" data-required />
-              <div class="form-error" data-error="contactName"></div>
-            </div>
-            <div class="form-group">
-              <label class="form-label">Email <span class="required">*</span></label>
-              <input type="email" name="email" id="contactEmail" class="form-control" placeholder="your@email.com" data-required />
-              <div class="form-error" data-error="contactEmail"></div>
-            </div>
-            <div class="form-group">
-              <label class="form-label">Subject <span class="required">*</span></label>
-              <select name="subject" id="contactSubject" class="form-control" data-required>
-                <option value="">Select subject</option>
-                <option>General Inquiry</option>
-                <option>Technical Support</option>
-                <option>Register Blood Bank</option>
-                <option>Report an Issue</option>
-                <option>Donor Registration Help</option>
-                <option>Emergency Assistance</option>
-              </select>
-              <div class="form-error" data-error="contactSubject"></div>
-            </div>
-            <div class="form-group">
-              <label class="form-label">Message <span class="required">*</span></label>
-              <textarea name="message" id="contactMessage" class="form-control" rows="5" placeholder="Describe your query..." data-required data-min-length="20"></textarea>
-              <div class="form-error" data-error="contactMessage"></div>
-            </div>
-            <button type="submit" class="btn btn-primary btn-block" id="sendBtn">Send Message</button>
-          </form>
-        </div>
-      </div>
-
+    <div style="max-width:760px;margin:0 auto">
       <!-- Contact Information -->
       <div style="display:flex;flex-direction:column;gap:20px">
         <div class="card">
@@ -83,8 +43,8 @@
                 <div style="width:44px;height:44px;background:#eff6ff;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:1.3rem;flex-shrink:0">📧</div>
                 <div>
                   <div style="font-weight:600">Email</div>
-                  <div style="color:var(--gray-500);font-size:0.9rem">support@EBDCS.in</div>
-                  <div style="color:var(--gray-500);font-size:0.9rem">admin@EBDCS.in</div>
+                  <a href="mailto:26r21a0553@mlrit.ac.in" style="color:var(--gray-500);font-size:0.9rem">26r21a0553@mlrit.ac.in</a><br>
+                  <a href="mailto:26r21a0550@mlrit.ac.in" style="color:var(--gray-500);font-size:0.9rem">26r21a0550@mlrit.ac.in</a>
                 </div>
               </div>
               <div style="display:flex;gap:14px;align-items:flex-start">
@@ -99,7 +59,7 @@
                 <div style="width:44px;height:44px;background:#f0fdf4;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:1.3rem;flex-shrink:0">📍</div>
                 <div>
                   <div style="font-weight:600">Office</div>
-                  <div style="color:var(--gray-500);font-size:0.9rem">EBDCS Systems<br>Health Tech Hub, Bangalore<br>Karnataka, India</div>
+                  <div style="color:var(--gray-500);font-size:0.9rem">Team 02, Batch 03, CSE-A<br>MLR Institute of Technology<br>Hyderabad, Telangana, India</div>
                 </div>
               </div>
             </div>
@@ -110,7 +70,7 @@
           <div class="card-body">
             <h3 style="margin-bottom:16px">Emergency?</h3>
             <div class="alert alert-error" style="margin-bottom:16px">
-              🚨 For urgent blood needs, don't use the contact form — use the Emergency Request feature instead.
+              🚨 For urgent blood needs, use the Emergency Request feature.
             </div>
             <a href="/pages/emergency-request.html" class="btn btn-emergency btn-block">🚨 Submit Emergency Request</a>
           </div>
@@ -130,7 +90,7 @@
               </details>
               <details style="border:1px solid var(--gray-200);border-radius:8px;padding:12px">
                 <summary style="cursor:pointer;font-weight:600">How do I register my blood bank?</summary>
-                <p style="margin-top:8px;color:var(--gray-600)">Contact us via email or use the contact form above. An admin will verify and register your blood bank in the system.</p>
+                <p style="margin-top:8px;color:var(--gray-600)">Email our team using either address listed above. An admin will verify and register your blood bank in the system.</p>
               </details>
             </div>
           </div>
@@ -145,28 +105,7 @@
     <div><div class="footer-brand-name">🩸 EBDCS</div><p style="font-size:0.9rem">Emergency Blood Donation Coordination System.</p></div>
     <div><h4>Links</h4><ul><li><a href="/index.html">Home</a></li><li><a href="/pages/about.html">About</a></li><li><a href="/pages/blood-search.html">Find Blood</a></li></ul></div>
   </div>
-  <div class="footer-bottom"><span>© 2024 EBDCS</span></div>
+  <div class="footer-bottom"><span>© 2026 EBDCS Emergency Blood Donation Coordination System (2026 cse-a batch 2 team 3(0553, 0550,0551,0542,0555)). All rights reserved.</span></div>
 </footer>
-
-<script src="/js/api.js"></script>
-<script src="/js/utils.js"></script>
-<script>
-  document.getElementById('contactForm').addEventListener('submit', async (e) => {
-    e.preventDefault();
-    if (!validateForm(e.target)) return;
-    const btn = document.getElementById('sendBtn');
-    btn.disabled = true; btn.textContent = 'Sending...';
-    const alertBox = document.getElementById('contactAlert');
-    // Simulate sending (real implementation would need a contact API endpoint)
-    setTimeout(() => {
-      alertBox.className = 'alert alert-success';
-      alertBox.innerHTML = '✅ Message sent! We will get back to you within 24 hours.';
-      e.target.reset();
-      btn.disabled = false;
-      btn.textContent = 'Send Message';
-      alertBox.scrollIntoView({ behavior: 'smooth' });
-    }, 1200);
-  });
-</script>
 </body>
 </html>
